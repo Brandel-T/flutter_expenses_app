@@ -1,0 +1,46 @@
+{
+    "homePageTitle": "Add a new transaction",
+    "@homePageTitle": {
+        "description": "description of what to do in first instance when entering the app"
+    },
+    "darkMode": "Dark mode",
+    "@darkMode": {
+        "description": "dark color mode"
+    },
+    "lightMode": "Light mode",
+    "@lightMode": {
+        "description": "light color mode"
+    },
+    "language": "Language",
+    "@language": {
+        "description": "current app language"
+    },
+    "locale": "English",
+    "@locale": {
+        "description": "current app locale"
+    },
+    "week": "Week",
+    "@week": {
+        "description": "week tab in expenses screen"
+    },
+    "month": "Month",
+    "@month": {
+        "description": "Month tab in expenses screen"
+    },
+    "year": "Year",
+    "@year": {
+        "description": "Year tab in expenses screen"
+    },
+    "home": "Home",
+    "@home": {
+        "description": "Homepage name"
+    },
+    "expenses": "Expenses",
+    "@expenses": {
+        "description": "Expenses page name"
+    },
+    "dashboard": "Dashboard",
+    "@dashboard": {
+        "description": "Dashboard page name"
+    }
+}
