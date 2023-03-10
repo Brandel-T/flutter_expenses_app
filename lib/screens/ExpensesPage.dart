@@ -1,5 +1,7 @@
 import 'package:expenses_app_2/components/BottomNavBar.dart';
+import 'package:expenses_app_2/screens/expenses_page_tabs/ExpensesMonthTab.dart';
 import 'package:expenses_app_2/screens/expenses_page_tabs/ExpensesWeekTab.dart';
+import 'package:expenses_app_2/screens/expenses_page_tabs/ExpensesYearTab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -54,8 +56,8 @@ class _ExpensesScreenState extends State<ExpensesScreen>
             body: const TabBarView(
               children: [
                 ExpensesWeekTab(),
-                Center(child: Text("month")),
-                Center(child: Text("year")),
+                ExpensesMonthTab(),
+                ExpensesYearTab(),
               ],
             ),
             bottomNavigationBar: const BottomNavBar(currentIndex: 1),

@@ -7,7 +7,18 @@
     "week": "Semaine",
     "month": "Mois",
     "year": "Ann\u00e9e",
+    "this_year": "Cette ann\u00e9e",
+    "at": "Le",
     "home": "Acceuil",
     "expenses": "D\u00e9penses",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "transaction": "Achat",
+    "amount": "Montant",
+    "reason": "Raison",
+    "expensesFrom": "D\u00E9penses du",
+    "loading": "Traitement ...",
+    "save": "Sauvegarder",
+    "delete": "Supprimer",
+    "required_form_field_message": "Ce champ est obligatore",
+    "take_picture_filed_message": "Prendre une photo"
 }

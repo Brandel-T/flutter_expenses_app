@@ -3,8 +3,6 @@ import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-// Localization
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/TransactionForm.dart';
 
@@ -19,12 +17,12 @@ class CalendarOverviewTab extends StatefulWidget {
 }
 
 class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
-  DateTime? _firstDay, _selectedDay = DateTime.now();
+  DateTime?  _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
 
-  void addNewTransactionModal(BuildContext context) {
+  void addNewTransactionModal(BuildContext context, Function close) {
     showModalBottomSheet(
       context: context,
       elevation: 4,
@@ -34,6 +32,7 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
           width: MediaQuery.of(context).size.width,
           child: TransactionForm(
             selectedDay: _selectedDay,
+            closeModal: close,
           ),
         );
       },
@@ -43,6 +42,10 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
+
+    void closeModal() {
+      Navigator.of(context).pop();
+    }
 
     return Scaffold(
       body: Consumer<TransactionProvider>(
@@ -77,13 +80,13 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
                     onPageChanged: (focusedDay) {_focusedDay = focusedDay;},
                     startingDayOfWeek: StartingDayOfWeek.monday,
                     shouldFillViewport: true,
-                    onDayLongPressed: (selectedDay, focusedDay) => addNewTransactionModal(context),
+                    onDayLongPressed: (selectedDay, focusedDay) => addNewTransactionModal(context, closeModal),
                     headerStyle: HeaderStyle(
-                      titleTextStyle: Theme.of(context).textTheme.headline4!,
+                      titleTextStyle: Theme.of(context).textTheme.headlineMedium!,
                       formatButtonDecoration: BoxDecoration(border: Border.all(color: Colors.transparent),),
                       formatButtonTextStyle: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w500, fontSize: 16)
                     ),
-                    daysOfWeekStyle: DaysOfWeekStyle(weekdayStyle: Theme.of(context).textTheme.subtitle2!),
+                    daysOfWeekStyle: DaysOfWeekStyle(weekdayStyle: Theme.of(context).textTheme.titleSmall!),
                   ),
                 ),
               ],
@@ -93,7 +96,7 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
       ),
       floatingActionButton: FloatingActionButton(
         elevation: 4,
-        onPressed: () => addNewTransactionModal(context),
+        onPressed: () => addNewTransactionModal(context, closeModal),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).colorScheme.surface,
         child: const Icon(Icons.add),

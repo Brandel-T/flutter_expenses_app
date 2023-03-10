@@ -6,38 +6,51 @@ import 'package:provider/provider.dart';
 import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
 
-class ExpenseTab extends StatefulWidget {
-  final Function requestData;
+import '../../models/transaction_per_month.dart';
+import '../../models/transaction_per_week.dart';
 
-  const ExpenseTab({super.key, required this.requestData});
+enum TType { WEEK, MONTH, YEAR }
+
+class ExpenseTab extends StatefulWidget {
+  final Future<void> requestData;
+  final TType type;
+
+  const ExpenseTab({super.key, required this.requestData, required this.type});
 
   @override
   State<ExpenseTab> createState() => _ExpenseTabState();
 }
 
 class _ExpenseTabState extends State<ExpenseTab> {
-  Function _requestData => widget.requestData;
-  
+  Future<void> _requestData() => widget.requestData;
+  TType _type() => widget.type;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Provider.of<TransactionProvider>(context, listen: false)
-          .getAllWeekTransactions(),
+      future: _requestData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         return Consumer<TransactionProvider>(
           builder: (context, appProvider, child) {
-            final groupedTransactions = appProvider.transactions_per_week;
+            final List<MTransactionPerWeek> groupedWeekTransactions;
+            final List<MTransactionPerMonth> groupedMonthTransactions;
+            groupedWeekTransactions = appProvider.transactions_per_week;
+            groupedMonthTransactions = appProvider.transactions_per_month;
 
             return ListView.builder(
-              itemCount: groupedTransactions.length,
+              itemCount: _type() == TType.WEEK
+                  ? groupedWeekTransactions.length
+                  : groupedMonthTransactions.length,
               itemBuilder: (context, index) {
-                final weekTransactions =
-                    groupedTransactions[index].weekTransactions;
-                final weekStartDay = groupedTransactions[index].startWeekDay;
-                final totalAmount = groupedTransactions[index].totalAmount;
+                // transactions per week, month or year
+                final periodTransactions =
+                    groupedWeekTransactions[index].weekTransactions;
+                final weekStartDay =
+                    groupedWeekTransactions[index].startWeekDay;
+                final totalAmount = groupedWeekTransactions[index].totalAmount;
 
                 return Column(
                   children: [
@@ -69,7 +82,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Column(
-                          children: weekTransactions.map(
+                          children: periodTransactions.map(
                             (transaction) {
                               return ListTile(
                                 leading: CircleAvatar(

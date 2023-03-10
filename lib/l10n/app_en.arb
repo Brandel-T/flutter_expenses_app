@@ -31,6 +31,14 @@
     "@year": {
         "description": "Year tab in expenses screen"
     },
+    "this_year": "This year",
+    "@this_year": {
+        "description": "this year"
+    },
+    "at": "At",
+    "@at": {
+        "description": "date the transaction"
+    },
     "home": "Home",
     "@home": {
         "description": "Homepage name"
@@ -42,5 +50,41 @@
     "dashboard": "Dashboard",
     "@dashboard": {
         "description": "Dashboard page name"
+    },
+    "transaction": "Transaction",
+    "@transaction": {
+        "description": "transaction of and user"
+    },
+    "amount": "Amount",
+    "@amount": {
+        "description": "purchase amount"
+    },
+    "reason": "Reason",
+    "@reason": {
+        "description": "reason for purchase"
+    },
+    "expensesFrom": "Expenses from",
+    "@expensesFrom": {
+        "description": "date of purchases"
+    },
+    "loading": "Processing data ...", 
+    "@loading": {
+        "description": "Data are being processed"
+    },
+    "save": "Save", 
+    "@save": {
+        "description": "save data of new transaction"
+    },
+    "delete": "Delete", 
+    "@delete": {
+        "description": "delete a transaction"
+    },
+    "required_form_field_message": "This field is required",
+    "@required_form_field_message": {
+        "description": "message of required form field"
+    },
+    "take_picture_filed_message": "Tap to take a picture",
+    "@take_picture_filed_message": {
+        "description": "message for the take picture field in a transaction form modal"
     }
 }

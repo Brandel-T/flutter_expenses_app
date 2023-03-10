@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:expenses_app_2/store/transaction_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TransactionDetail extends StatelessWidget {
   final int index;
@@ -28,70 +29,84 @@ class TransactionDetail extends StatelessWidget {
                       width: double.infinity,
                       child: Image.file(
                           fit: BoxFit.cover,
-                          File(tProvider.transactions[index].imagePath)
+                          File(tProvider.transactions[index].imagePath)),
+                    )),
+                Expanded(
+                  flex: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 0, horizontal: paddingX),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TransactionEntry(
+                              context,
+                              "${AppLocalizations.of(context)!.at} ",
+                              tProvider.transactions[index].date.toString()),
+                          TransactionEntry(
+                              context,
+                              "${AppLocalizations.of(context)!.transaction} ",
+                              tProvider.transactions[index].name),
+                          TransactionEntry(
+                              context,
+                              AppLocalizations.of(context)!.reason,
+                              tProvider.transactions[index].reason),
+                          TransactionEntry(
+                              context,
+                              "${AppLocalizations.of(context)!.amount} ",
+                              "${tProvider.transactions[index].amount} €")
+                        ],
                       ),
-                    )
+                    ),
+                  ),
                 ),
                 Expanded(
-                    flex: 4,
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: paddingX),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TransactionEntry(context, "At ", tProvider.transactions[index].date.toString()),
-                              TransactionEntry(context, "Name ", tProvider.transactions[index].name),
-                              TransactionEntry(context, "Reason", tProvider.transactions[index].reason),
-                              TransactionEntry(context, "Amount ", "${tProvider.transactions[index].amount} €")
-                            ],
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: paddingX),
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, paddingX - 5),
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.save_outlined),
+                        label: Text(AppLocalizations.of(context)!.save),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 0, horizontal: paddingX),
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.fromLTRB(0, paddingX - 5, 0, 0),
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.delete_outlined),
+                        label: Text(AppLocalizations.of(context)!.delete),
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              return Theme.of(context).colorScheme.error;
+                            },
                           ),
-                        )
-                    )
-                ),
-                Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: paddingX),
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.fromLTRB(0, 0, 0, paddingX-5),
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.save_outlined),
-                          label: const Text("save"),
+                          foregroundColor: MaterialStateColor.resolveWith(
+                              (Set<MaterialState> states) =>
+                                  Theme.of(context).colorScheme.onError),
                         ),
                       ),
-                    )
-                ),
-                Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: paddingX),
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.fromLTRB(0, paddingX-5, 0, 0),
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.delete_outlined),
-                          label: const Text("Delete"),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                                return Theme.of(context).colorScheme.error;
-                              },),
-                            foregroundColor: MaterialStateColor.resolveWith(
-                                    (Set<MaterialState> states) => Theme.of(context).colorScheme.onError
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
+                    ),
+                  ),
                 ),
               ],
             ),
-          )
+          ),
         );
       },
     );
@@ -101,8 +116,8 @@ class TransactionDetail extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10.0,),
-        Text(label, style: TextStyle(color: Theme.of(context).hintColor),),
+        const SizedBox(height: 10.0),
+        Text(label, style: TextStyle(color: Theme.of(context).hintColor)),
         Text(entry),
       ],
     );
