@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utils/lang.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,19 +32,6 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  void _backToCalendarOverviewTab() {
-    setState(() {
-      print("tab index switched to home");
-      _tabController.index = 1;
-    });
-  }
-
-  void _useUploadedImage(String imagePath) {
-    setState(() {
-      _uploadedBillImagePath = imagePath;
-    });
-  }
-
   void _setSelectedDay(DateTime daySelected) {
     setState(() {
       _selectedDay = daySelected;
@@ -55,36 +40,46 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+
     return Consumer<TransactionProvider>(
-      builder: (context, tProvider, child) {
+      builder: (context, appProvider, child) {
         return Scaffold(
-          drawer: const Drawer(
-            child: SettingsDrawer(),
-          ),
-          appBar: AppBar(
-            title: Text( AppLocalizations.of(context)!.homePageTitle ),
-            actions: [
-              Switch(
-                value: tProvider.isDark,
-                onChanged: (value) {
-                  tProvider.isDark = value;
-                },
-              )
-            ],
-          ),
-          body: Column(
-            children: [
-              Flexible(
-                child: CalendarOverviewTab(
-                  imagePath: _uploadedBillImagePath,
-                  setSelectedDay: _setSelectedDay,
+            drawer: const Drawer(
+              child: SettingsDrawer(),
+            ),
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.homePageTitle),
+              actions: [
+                Switch(
+                  value: appProvider.isDark,
+                  onChanged: (value) {
+                    appProvider.isDark = value;
+                    // appProvider.setPrefColorMode(value);
+                  },
                 ),
-              )
-            ],
-          )
+                GestureDetector(
+                  onTap: () {
+                    appProvider.isDark = !appProvider.isDark; // app wide using state management
+                  },
+                  child: appProvider.isDark
+                      ? const Icon(Icons.dark_mode_outlined)
+                      : const Icon(Icons.light_mode_outlined),
+                )
+              ],
+            ),
+            body: Column(
+              children: [
+                Flexible(
+                  child: CalendarOverviewTab(
+                    imagePath: _uploadedBillImagePath,
+                    setSelectedDay: _setSelectedDay,
+                  ),
+                )
+              ],
+            )
         );
       },
-    ) ;
+    );
   }
 }
 /*

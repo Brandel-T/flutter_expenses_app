@@ -20,49 +20,38 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   @override
   void initState() {
     super.initState();
-    _loadColorMode();
-    _loadLocale();
+
+    _loadSharedPreferencesData();
   }
 
-  Future<void> _loadColorMode() async {
+  Future<void> _loadSharedPreferencesData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isDark = prefs.getBool('isDark') ?? false;
-    });
-  }
-
-  Future<void> _loadLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
       _locale = Locale(prefs.getString('languageCode') ?? 'en');
     });
   }
 
-  Future<void> _switchColorMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isDark = !(prefs.getBool('isDark') ?? false);
-      prefs.setBool('isDark', _isDark);
-    });
-  }
-
-  Future<void> _setLocale(Locale lc) async {
+  Future<void> _setPrefLocale(Locale lc) async {
     if (!L10n.all.contains(lc)) {
       throw ArgumentError("language code ${lc.languageCode} is not supported for this application");
     }
 
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _locale = lc;
-      prefs.setString('languageCode', lc.languageCode);
-    });
+    prefs.setString('languageCode', lc.languageCode);
+  }
+
+  Future<void> _setPrefColorMode(bool isDark) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDark', isDark);
   }
 
 
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<TransactionProvider>(context, listen: false);
-    final language = appProvider.locale;
+    // appProvider.isDark = _isDark; // without notify listener
+    // appProvider.locale = _locale; // without notify listener
 
     return ListView(
       // Important: Remove any padding from the ListView.
@@ -73,7 +62,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             color: Theme.of(context).colorScheme.primaryContainer,
           ),
           child: Center(
-            child: Text("Expenses App", style: Theme.of(context).textTheme.headline3!,),
+            child: Text("Expenses App", style: Theme.of(context).textTheme.displaySmall!,),
           ),
         ),
         Padding(padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
@@ -86,15 +75,13 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               ),
               GestureDetector(
                 onTap: () {
-                  appProvider.isDark = !appProvider.isDark;
-                  _switchColorMode();
+                  // appProvider.isDark = !appProvider.isDark;
+                  // _setPrefColorMode(appProvider.isDark);
+                  appProvider.setPrefColorMode(!appProvider.isDark);
                 },
                 child: appProvider.isDark
                    ? const Icon(Icons.dark_mode_outlined)
                    : const Icon(Icons.light_mode_outlined),
-                ///child: appProvider.isDark
-                //                     ? const Icon(Icons.dark_mode_outlined)
-                //                     : const Icon(Icons.light_mode_outlined),
               )
             ],
           ),
@@ -110,22 +97,18 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               DropdownButton(
-                value: language,
+                value: appProvider.locale,
+                icon: const Icon(Icons.keyboard_arrow_down_outlined),
+                onChanged: (Locale? newLocale) {
+                  appProvider.setPrefLocale(newLocale ?? const Locale('en'));
+                },
                 items: L10n.all.map((locale) {
                   final countryName = L10n.getCountryName(locale.languageCode);
-
                   return DropdownMenuItem(
                     value: locale,
                     child: Text(countryName),
-                    onTap: () {
-                      appProvider.locale = locale;
-                    },
                   );
                 }).toList(),
-                onChanged: (newLocale) {
-                  _setLocale(newLocale!);
-                  appProvider.locale = newLocale;
-                },
               ),
             ],
           ),

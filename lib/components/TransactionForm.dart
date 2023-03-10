@@ -1,16 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TransactionForm extends StatefulWidget {
   final DateTime? selectedDay;
+  final Function closeModal;
 
   const TransactionForm({
     super.key,
     required this.selectedDay,
+    required this.closeModal,
   });
 
   @override
@@ -47,6 +51,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<TransactionProvider>(context, listen: false);
+
     return Form(
       key: _formKey,
       child: SizedBox(
@@ -58,27 +64,30 @@ class _TransactionFormState extends State<TransactionForm> {
               Container(
                 margin: const EdgeInsets.only(top: 10.0),
                 child: Text(
-                  "Expenses of ${widget.selectedDay}",
+                  "${AppLocalizations.of(context)!.expensesFrom} ${DateFormat.yMMMMd(appProvider.locale.countryCode).format(widget.selectedDay ?? DateTime.now())}",
                   textAlign: TextAlign.start,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              InputField(
+              _inputField(
+                context,
                 _transactionController,
                 const Icon(Icons.shopping_cart),
-                "Transaction",
+                AppLocalizations.of(context)!.transaction,
                 TextInputType.text,
               ),
-              InputField(
+              _inputField(
+                context,
                   _reasonController,
                   const Icon(Icons.question_mark_sharp),
-                  "Reason",
+                  AppLocalizations.of(context)!.reason,
                   TextInputType.text
               ),
-              InputField(
+              _inputField(
+                context,
                 _amountController,
                 const Icon(Icons.euro),
-                "Amount",
+                AppLocalizations.of(context)!.amount,
                 TextInputType.number,
               ),
               Expanded(
@@ -98,7 +107,11 @@ class _TransactionFormState extends State<TransactionForm> {
                           ),
                           child: _invoiceImagePath != ""
                               ? Image.file(File(_invoiceImagePath), fit: BoxFit.cover ,)
-                              : const Center(child: Text('Tap to add a picture of the invoice', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, ),),),
+                              : Center(child: Text(
+                                  AppLocalizations.of(context)!.take_picture_filed_message,
+                                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15, ),
+                              ),
+                          ),
                         ),
                       ),
                       Consumer<TransactionProvider>(
@@ -111,8 +124,8 @@ class _TransactionFormState extends State<TransactionForm> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Processing Data ...')
+                                      SnackBar(
+                                          content: Text(AppLocalizations.of(context)!.loading)
                                       ),
                                     );
                                     // TODO: Save the new transaction
@@ -126,8 +139,11 @@ class _TransactionFormState extends State<TransactionForm> {
                                       widget.selectedDay!.toIso8601String(),
                                     );
                                   }
+
+                                  // close modal callback
+                                  widget.closeModal();
                                 },
-                                child: const Text("Save"),
+                                child: Text(AppLocalizations.of(context)!.save),
                               ),
                             ),
                           );
@@ -144,7 +160,8 @@ class _TransactionFormState extends State<TransactionForm> {
   }
 }
 
-Widget InputField(
+Widget _inputField(
+  BuildContext context,
   TextEditingController controller,
   Widget prefixIcon,
   String hintText,
@@ -166,7 +183,7 @@ Widget InputField(
       keyboardType: inputType,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return "This field is required";
+          return AppLocalizations.of(context)!.required_form_field_message;
         }
         return null;
       },

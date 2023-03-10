@@ -7,7 +7,18 @@
     "week": "Woche",
     "month": "Monat",
     "year": "Jahr",
+    "this_year": "Dieses Jahr",
+    "at": "Der",
     "home": "Home",
     "expenses": "Ausgaben",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "transaction": "Kauf",
+    "amount": "Kosten",
+    "reason": "Warum ?",
+    "expensesFrom": "Ausgaben von",
+    "loading": "In Bearbeitung ...",
+    "save": "Speichern",
+    "delete": "L\u00F6schen",
+    "required_form_field_message": "Dies Feld ist pflicht",
+    "take_picture_filed_message": "Foto aufnehmen"
 }
