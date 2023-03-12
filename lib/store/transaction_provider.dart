@@ -9,6 +9,7 @@ import '../l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/transaction_per_year.dart';
+import '../models/transaction_amount_grouped_data.dart';
 
 class TransactionProvider extends ChangeNotifier {
   bool _isDark = false;
@@ -18,6 +19,8 @@ class TransactionProvider extends ChangeNotifier {
   List<MTransactionPerWeek> transactions_per_week = [];
   List<MTransactionPerMonth> transactions_per_month = [];
   List<MTransactionPerYear> transactions_per_year = [];
+  List<MTransactionGroupedAmountData> maxAmountPerMonth = [];
+  List<MTransactionGroupedAmountData> maxAmountPerWeek = [];
 
   bool get isDark => _isDark;
 
@@ -161,7 +164,6 @@ class TransactionProvider extends ChangeNotifier {
         weekTransactions: e.value,
       );
     }).toList();
-
     notifyListeners();
   }
 
@@ -263,5 +265,17 @@ class TransactionProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('can not update in the db $e');
     }
+  }
+
+  Future<void> getMaxAmountPerMonth() async {
+    List<Map<String, dynamic>> data = await TransactionService.findMaxAmountPerMonth();
+    for (int i = 0; i < data.length; ++i) {
+      MTransactionGroupedAmountData value = MTransactionGroupedAmountData(
+        periodDate: data[i]['month'],
+        periodAmount: data[i]['month_total_amount'],
+      );
+      maxAmountPerMonth.add(value);
+    }
+    maxAmountPerMonth.sort((a, b) => a.compareTo(b)); // ! IMPORTANT
   }
 }

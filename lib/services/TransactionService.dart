@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:expenses_app_2/models/transaction.dart' as tr;
-import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:flutter/widgets.dart';
@@ -71,5 +70,17 @@ class TransactionService {
       whereArgs: [data.id],
       conflictAlgorithm: sql.ConflictAlgorithm.replace,
     );
+  }
+
+  /// get the total amount of transactions per month grouped by month
+  static Future<List<Map<String, dynamic>>> findMaxAmountPerMonth() async {
+    final db = await TransactionService.openDB();
+    String sql = '''
+      SELECT STRFTIME('%m', DATE(date)) AS month, SUM(amount) as month_total_amount
+      FROM $TABLE_NAME
+      GROUP BY month
+      ORDER BY month ASC
+    ''';
+    return db.rawQuery(sql);
   }
 }

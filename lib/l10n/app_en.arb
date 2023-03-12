@@ -35,6 +35,10 @@
     "@this_year": {
         "description": "this year"
     },
+    "this_month": "This month",
+    "@this_month": {
+        "description": "this month"
+    },
     "at": "At",
     "@at": {
         "description": "date the transaction"

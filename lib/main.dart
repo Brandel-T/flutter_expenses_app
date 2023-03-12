@@ -62,7 +62,6 @@ class _MyAppState extends State<MyApp> {
     final appProvider = Provider.of<TransactionProvider>(context);
     // appProvider.isDark = _isDark; // without notify listener
     // appProvider.locale = Locale(_localeLanguageCode); // without notify listener
-  print("============= locale in main: $_localeLanguageCode ============");
 
   return MaterialApp(
       title: 'Expenses App',

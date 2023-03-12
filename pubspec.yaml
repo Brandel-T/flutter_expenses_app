@@ -30,6 +30,7 @@ dependencies:
   flex_color_scheme: ^6.1.2 # library form theming: see https://rydmike.com/flexcolorscheme/themesplayground-v6/#/
   sqflite: ^2.2.5
   shared_preferences: ^2.0.18
+  syncfusion_flutter_charts: ^20.4.53
 
 dev_dependencies:
   flutter_test:
