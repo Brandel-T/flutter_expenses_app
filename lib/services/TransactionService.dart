@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:expenses_app_2/models/transaction.dart' as tr;
-import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:flutter/widgets.dart';

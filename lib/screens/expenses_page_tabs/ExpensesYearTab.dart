@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../models/transaction.dart';
+
 class ExpensesYearTab extends StatefulWidget {
   const ExpensesYearTab({Key? key}) : super(key: key);
 
@@ -66,7 +68,7 @@ class _ExpensesYearTabState extends State<ExpensesYearTab> {
                       margin: const EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -114,12 +116,18 @@ class _ExpensesYearTabState extends State<ExpensesYearTab> {
                                         Theme.of(context).textTheme.titleMedium,
                                   ),
                                   onTap: () {
-                                    // TODO: show detail of the selected transaction
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                TransactionDetail(
-                                                    index: index)));
+                                    Navigator.pushNamed(
+                                    context,
+                                    TransactionDetail.routeName,
+                                    arguments: Transaction(
+                                      id: transaction['id'],
+                                      name: transaction['name'],
+                                      reason: transaction['reason'],
+                                      amount: transaction['amount'],
+                                      imagePath: transaction['imagePath'],
+                                      date: transaction['date'],
+                                    ),
+                                  );
                                   },
                                 ),
                               );

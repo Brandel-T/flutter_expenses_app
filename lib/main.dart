@@ -1,3 +1,4 @@
+import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -79,6 +80,9 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: l10n.L10n.all,
       home: const HomePage(),
+    routes: {
+        TransactionDetail.routeName: (context) => const TransactionDetail(),
+    },
     );
   }
 }

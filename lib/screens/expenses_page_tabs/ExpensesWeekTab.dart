@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:expenses_app_2/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -63,7 +64,7 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
                       margin: const EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -111,12 +112,17 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
                                         Theme.of(context).textTheme.titleMedium,
                                   ),
                                   onTap: () {
-                                    // TODO: show detail of the selected transaction
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TransactionDetail(index: index),
-                                      ),
+                                    Navigator.pushNamed(
+                                        context,
+                                        TransactionDetail.routeName,
+                                        arguments: Transaction(
+                                            id: transaction['id'],
+                                            name: transaction['name'],
+                                            reason: transaction['reason'],
+                                            amount: transaction['amount'],
+                                            imagePath: transaction['imagePath'],
+                                            date: transaction['date'],
+                                        ),
                                     );
                                   },
                                 ),
