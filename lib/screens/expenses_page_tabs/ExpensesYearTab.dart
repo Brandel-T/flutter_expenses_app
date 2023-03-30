@@ -30,7 +30,9 @@ class _ExpensesYearTabState extends State<ExpensesYearTab> {
           builder: (context, appProvider, child) {
             final groupedTransactions = appProvider.transactions_per_year;
 
-            return ListView.builder(
+            return groupedTransactions.isEmpty
+                ? const Center(child: Text('No entries'),)
+                : ListView.builder(
               itemCount: groupedTransactions.length,
               itemBuilder: (context, index) {
                 final yearTransactions =

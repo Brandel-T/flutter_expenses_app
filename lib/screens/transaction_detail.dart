@@ -58,7 +58,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Transaction detail"),
+        title: const Text("Transaction detail")
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, paddingX),
@@ -66,12 +66,29 @@ class _TransactionDetailState extends State<TransactionDetail> {
           children: [
             Flexible(
               flex: 7,
-              child: SizedBox(
-                width: double.infinity,
-                child: imagePath == "" ? const Text('No taken picture') : Image.file(
-                  fit: BoxFit.cover,
-                  File(imagePath),
-                ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: imagePath == "" ? const Text('No taken picture') : Image.file(
+                        fit: BoxFit.cover,
+                        File(imagePath),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface.withOpacity(0.8)
+                      ),
+                      child: Text(style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 24), "${AppLocalizations.of(context)!.at} ${DateFormat.yMMMEd(appProvider.locale.countryCode).format(DateTime.parse(date))}"),
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -91,7 +108,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
                       //                           "${AppLocalizations.of(context)!.at} ",
                       //                           date.toString()),
                       //                       ),
-                      Text("${AppLocalizations.of(context)!.at} ${DateFormat.yMMMEd(appProvider.locale.countryCode).format(DateTime.parse(date))}"),
+
                       Expanded(
                         flex: 1,
                         child: TransactionEntry(
