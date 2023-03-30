@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:expenses_app_2/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,9 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
           builder: (context, appProvider, child) {
             final groupedTransactions = appProvider.transactions_per_week;
 
-            return ListView.builder(
+            return groupedTransactions.isEmpty
+                ? const Center(child: Text('No entries'),)
+                : ListView.builder(
               itemCount: groupedTransactions.length,
               itemBuilder: (context, index) {
                 final weekTransactions =
@@ -35,8 +38,8 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
 
                 // format the total amount to two decimal places
                 final totalAmount =
-                    NumberFormat(".0#", appProvider.locale.countryCode)
-                        .format(groupedTransactions[index].totalAmount);
+                NumberFormat(".0#", appProvider.locale.countryCode)
+                    .format(groupedTransactions[index].totalAmount);
 
                 return Column(
                   children: [
@@ -63,13 +66,12 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
                       margin: const EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Column(
-                          children: weekTransactions.map(
-                            (transaction) {
+                          children: weekTransactions.map( (transaction) {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: ListTile(
@@ -87,16 +89,16 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
                                   ),
                                   subtitle: Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(transaction["reason"]),
                                       Text(
                                         DateFormat.yMEd(
-                                                appProvider.locale.countryCode)
+                                            appProvider.locale.countryCode)
                                             .format(DateTime.parse(
-                                                transaction["date"])),
+                                            transaction["date"])),
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -108,14 +110,19 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
                                   trailing: Text(
                                     "${transaction["amount"]} €",
                                     style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                    Theme.of(context).textTheme.titleMedium,
                                   ),
                                   onTap: () {
-                                    // TODO: show detail of the selected transaction
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TransactionDetail(index: index),
+                                    Navigator.pushNamed(
+                                      context,
+                                      TransactionDetail.routeName,
+                                      arguments: Transaction(
+                                        id: transaction['id'],
+                                        name: transaction['name'],
+                                        reason: transaction['reason'],
+                                        amount: transaction['amount'],
+                                        imagePath: transaction['imagePath'],
+                                        date: transaction['date'],
                                       ),
                                     );
                                   },

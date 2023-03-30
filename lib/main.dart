@@ -1,3 +1,4 @@
+import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -50,7 +51,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _isDark = prefs.getBool('isDark') ?? false;
       _localeLanguageCode = prefs.getString('languageCode') ?? 'en';
-      debugPrint(">>>>>>>>>>>> shared preferences loaded (isDark: $_isDark)<<<<<<<<<<<<<<<");
+      // debugPrint(">>>>>>>>>>>> shared preferences loaded (isDark: $_isDark)<<<<<<<<<<<<<<<");
     });
   }
 
@@ -62,7 +63,7 @@ class _MyAppState extends State<MyApp> {
     final appProvider = Provider.of<TransactionProvider>(context);
     // appProvider.isDark = _isDark; // without notify listener
     // appProvider.locale = Locale(_localeLanguageCode); // without notify listener
-  print("============= locale in main: $_localeLanguageCode ============");
+  // print("============= locale in main: $_localeLanguageCode ============");
 
   return MaterialApp(
       title: 'Expenses App',
@@ -79,6 +80,9 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: l10n.L10n.all,
       home: const HomePage(),
+    routes: {
+        TransactionDetail.routeName: (context) => const TransactionDetail(),
+    },
     );
   }
 }

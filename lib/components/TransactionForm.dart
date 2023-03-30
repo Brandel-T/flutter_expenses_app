@@ -40,10 +40,8 @@ class _TransactionFormState extends State<TransactionForm> {
   String _invoiceImagePath = "";
 
   void _takePicture() async {
-    final image = await ImagePicker.platform.pickImage(
-        source: ImageSource.camera,
-        maxWidth: 600
-    );
+    final image = await ImagePicker.platform
+        .pickImage(source: ImageSource.camera, maxWidth: 600);
     setState(() {
       _invoiceImagePath = image!.path;
     });
@@ -51,7 +49,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<TransactionProvider>(context, listen: false);
+    final appProvider =
+        Provider.of<TransactionProvider>(context, listen: false);
 
     return Form(
       key: _formKey,
@@ -77,12 +76,11 @@ class _TransactionFormState extends State<TransactionForm> {
                 TextInputType.text,
               ),
               _inputField(
-                context,
+                  context,
                   _reasonController,
                   const Icon(Icons.question_mark_sharp),
                   AppLocalizations.of(context)!.reason,
-                  TextInputType.text
-              ),
+                  TextInputType.text),
               _inputField(
                 context,
                 _amountController,
@@ -91,66 +89,73 @@ class _TransactionFormState extends State<TransactionForm> {
                 TextInputType.number,
               ),
               Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => _takePicture(),
-                        child: Container(
-                          height: double.infinity,
-                          width: 250,
-                          margin: const EdgeInsets.fromLTRB(0, 10, 4, 0),
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 0),
-                              borderRadius: BorderRadius.circular(4),
-                              color: Colors.transparent
-                          ),
-                          child: _invoiceImagePath != ""
-                              ? Image.file(File(_invoiceImagePath), fit: BoxFit.cover ,)
-                              : Center(child: Text(
-                                  AppLocalizations.of(context)!.take_picture_filed_message,
-                                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15, ),
-                              ),
-                          ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _takePicture(),
+                      child: Container(
+                        height: double.infinity,
+                        width: 250,
+                        margin: const EdgeInsets.fromLTRB(0, 10, 4, 0),
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0),
+                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.transparent,
                         ),
-                      ),
-                      Consumer<TransactionProvider>(
-                        builder: (context, transactionProvider, child) {
-                          return Expanded(
-                            child: Container(
-                              height: double.infinity,
-                              margin: const EdgeInsets.only(top: 10.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(AppLocalizations.of(context)!.loading)
-                                      ),
-                                    );
-                                    // TODO: Save the new transaction
-                                    Uuid id = const Uuid();
-                                    transactionProvider.addTransaction(
-                                      id.v1(),
-                                      _transactionController.text,
-                                      _reasonController.text,
-                                      double.parse(_amountController.text),
-                                      _invoiceImagePath,
-                                      widget.selectedDay!.toIso8601String(),
-                                    );
-                                  }
-
-                                  // close modal callback
-                                  widget.closeModal();
-                                },
-                                child: Text(AppLocalizations.of(context)!.save),
+                        child: _invoiceImagePath != ""
+                            ? Image.file(
+                                File(_invoiceImagePath),
+                                fit: BoxFit.cover,
+                              )
+                            : Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .take_picture_filed_message,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                  ),
+                                ),
                               ),
-                            ),
-                          );
-                        },
                       ),
-                    ],
-                  )
+                    ),
+                    Consumer<TransactionProvider>(
+                      builder: (context, transactionProvider, child) {
+                        return Expanded(
+                          child: Container(
+                            height: double.infinity,
+                            margin: const EdgeInsets.only(top: 10.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(AppLocalizations.of(context)!.loading),
+                                    ),
+                                  );
+
+                                  Uuid id = const Uuid();
+                                  transactionProvider.addTransaction(
+                                    id.v1(),
+                                    _transactionController.text,
+                                    _reasonController.text,
+                                    double.parse(_amountController.text),
+                                    _invoiceImagePath,
+                                    widget.selectedDay!.toIso8601String(),
+                                  );
+                                }
+
+                                widget.closeModal();
+                              },
+                              child: Text(AppLocalizations.of(context)!.save),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -169,10 +174,6 @@ Widget _inputField(
 ) {
   return Container(
     margin: const EdgeInsets.only(top: 10.0),
-    //decoration: BoxDecoration(
-      //color: Colors.grey[200],
-      //borderRadius: BorderRadius.circular(10.0),
-    //),
     child: TextFormField(
       controller: controller,
       decoration: InputDecoration(

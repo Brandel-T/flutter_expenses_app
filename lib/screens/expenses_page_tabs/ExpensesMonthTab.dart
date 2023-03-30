@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/transaction.dart';
+
 class ExpensesMonthTab extends StatefulWidget {
   const ExpensesMonthTab({Key? key}) : super(key: key);
 
@@ -27,7 +29,9 @@ class _ExpensesMonthTabState extends State<ExpensesMonthTab> {
           builder: (context, appProvider, child) {
             final groupedTransactions = appProvider.transactions_per_month;
 
-            return ListView.builder(
+            return groupedTransactions.isEmpty
+                ? const Center(child: Text('No entries'),)
+                : ListView.builder(
               itemCount: groupedTransactions.length,
               itemBuilder: (context, index) {
                 final monthTransactions =
@@ -63,7 +67,7 @@ class _ExpensesMonthTabState extends State<ExpensesMonthTab> {
                       margin: const EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -111,12 +115,18 @@ class _ExpensesMonthTabState extends State<ExpensesMonthTab> {
                                         Theme.of(context).textTheme.titleMedium,
                                   ),
                                   onTap: () {
-                                    // TODO: show detail of the selected transaction
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                TransactionDetail(
-                                                    index: index)));
+                                    Navigator.pushNamed(
+                                      context,
+                                      TransactionDetail.routeName,
+                                      arguments: Transaction(
+                                        id: transaction['id'],
+                                        name: transaction['name'],
+                                        reason: transaction['reason'],
+                                        amount: transaction['amount'],
+                                        imagePath: transaction['imagePath'],
+                                        date: transaction['date'],
+                                      ),
+                                    );
                                   },
                                 ),
                               );
