@@ -20,5 +20,9 @@
     "save": "Speichern",
     "delete": "L\u00F6schen",
     "required_form_field_message": "Dies Feld ist pflicht",
-    "take_picture_filed_message": "Foto aufnehmen"
+    "take_picture_filed_message": "Foto aufnehmen",
+    "no_entry": "Keine Transaktion",
+    "home_screen_header_title": "Gesamtbetrag des Monats",
+    "most_expensive_transactions": "Teuerste Transaktionen",
+    "next": "Weiter"
 }
