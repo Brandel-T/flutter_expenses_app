@@ -14,23 +14,6 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-  bool _isDark = false;
-  Locale _locale = const Locale('en');
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadSharedPreferencesData();
-  }
-
-  Future<void> _loadSharedPreferencesData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isDark = prefs.getBool('isDark') ?? false;
-      _locale = Locale(prefs.getString('languageCode') ?? 'en');
-    });
-  }
 
   Future<void> _setPrefLocale(Locale lc) async {
     if (!L10n.all.contains(lc)) {
@@ -50,8 +33,6 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<TransactionProvider>(context, listen: false);
-    // appProvider.isDark = _isDark; // without notify listener
-    // appProvider.locale = _locale; // without notify listener
 
     return ListView(
       // Important: Remove any padding from the ListView.
@@ -75,9 +56,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               ),
               GestureDetector(
                 onTap: () {
-                  // appProvider.isDark = !appProvider.isDark;
-                  // _setPrefColorMode(appProvider.isDark);
-                  appProvider.setPrefColorMode(!appProvider.isDark);
+                  appProvider.setColorMode(!appProvider.isDark);
                 },
                 child: appProvider.isDark
                    ? const Icon(Icons.dark_mode_outlined)
@@ -100,7 +79,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 value: appProvider.locale,
                 icon: const Icon(Icons.keyboard_arrow_down_outlined),
                 onChanged: (Locale? newLocale) {
-                  appProvider.setPrefLocale(newLocale ?? const Locale('en'));
+                  appProvider.setLocale(newLocale ?? const Locale('en'));
                 },
                 items: L10n.all.map((locale) {
                   final countryName = L10n.getCountryName(locale.languageCode);

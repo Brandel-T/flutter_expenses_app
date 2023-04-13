@@ -20,5 +20,9 @@
     "save": "Sauvegarder",
     "delete": "Supprimer",
     "required_form_field_message": "Ce champ est obligatore",
-    "take_picture_filed_message": "Prendre une photo"
+    "take_picture_filed_message": "Prendre une photo",
+    "no_entry": "Aucune transaction",
+    "home_screen_header_title": "Montant total de ce mois",
+    "most_expensive_transactions": "Achats les plus co\u00FBteux",
+    "next": "Continue"
 }
