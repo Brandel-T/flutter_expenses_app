@@ -14,6 +14,7 @@ import '../models/transaction_amount_grouped_data.dart';
 class TransactionProvider extends ChangeNotifier {
   bool _isDark = false;
   Locale _locale = const Locale('en');
+
   List<Map<String, dynamic>> requestData = [];
   List<Transaction> transactions = [];
   List<MTransactionPerWeek> transactions_per_week = [];
@@ -35,12 +36,18 @@ class TransactionProvider extends ChangeNotifier {
   Locale get locale => _locale;
 
   set locale(Locale locale) {
-    if (!L10n.all.contains(locale)) {
-      _locale = const Locale('en');
-    } else {
-      _locale = locale;
-    }
+    _locale = !L10n.all.contains(locale) ? const Locale('en') : locale;
     notifyListeners();
+  }
+
+  void loadColorMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    isDark = prefs.getBool('isDark') ?? false;
+  }
+
+ void loadLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    locale = Locale(prefs.getString('languageCode') ?? 'en');
   }
 
   Future<void> loadPrefColorMode() async {
