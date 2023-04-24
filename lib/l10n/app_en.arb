@@ -90,5 +90,21 @@
     "take_picture_filed_message": "Tap to take a picture",
     "@take_picture_filed_message": {
         "description": "message for the take picture field in a transaction form modal"
-    }
+    },
+    "no_entry": "No transaction found",
+    "@no_entry": {
+        "descsription": "No Entry in db"
+    },
+    "home_screen_header_title": "Total amount of this month",
+    "@home_screen_header_title": {
+        "descsription": "title of the header banner in home screen"
+    },
+    "most_expensive_transactions": "Most expensive transactions",
+    "@most_expensive_transactions": {
+        "descsription": "homescreen Most expensive transactions headline"
+    },
+    "next": "Continue",
+    "@next": {
+        "description": "Next step"
+    } 
 }

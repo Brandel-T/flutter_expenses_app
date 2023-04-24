@@ -21,6 +21,9 @@ class TransactionProvider extends ChangeNotifier {
   List<MTransactionPerYear> transactions_per_year = [];
   List<MTransactionGroupedAmountData> maxAmountPerMonth = [];
   List<MTransactionGroupedAmountData> maxAmountPerWeek = [];
+  List<Transaction> lastMostExpensiveTransactions = [];
+  Transaction? lastTransaction;
+  double totalMonthAmount = 0;
 
   bool get isDark => _isDark;
 
@@ -32,8 +35,11 @@ class TransactionProvider extends ChangeNotifier {
   Locale get locale => _locale;
 
   set locale(Locale locale) {
-    if (!L10n.all.contains(locale)) return;
-    _locale = locale;
+    if (!L10n.all.contains(locale)) {
+      _locale = const Locale('en');
+    } else {
+      _locale = locale;
+    }
     notifyListeners();
   }
 
@@ -42,102 +48,37 @@ class TransactionProvider extends ChangeNotifier {
     isDark = prefs.getBool('isDark') ?? false;
   }
 
-  Future<void> setPrefColorMode(bool colorMode) async {
+  Future<void> setPrefColorMode(bool darkMode) async {
     final prefs = await SharedPreferences.getInstance();
-    isDark = colorMode;
-    prefs.setBool('isDark', isDark);
+    prefs.setBool('isDark', darkMode);
   }
 
-  void switchColorMode() {
+  void setColorMode(bool isDark) {
+    this.isDark = isDark;
+    setPrefColorMode(isDark);
+  }
+
+  void switchColorMode() async {
     _isDark = !_isDark;
     notifyListeners();
   }
 
-  Future<void> loadPrefLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    locale = Locale(prefs.getString('languageCode') ?? 'en');
-  }
-
   Future<void> setPrefLocale(Locale lc) async {
+    final prefs = await SharedPreferences.getInstance();
     if (!L10n.all.contains(lc)) {
-      throw ArgumentError("locale '${lc.languageCode} is not supported");
+      prefs.setString('languageCode', 'en');
+    } else {
+      prefs.setString('languageCode', locale.languageCode);
     }
-    final prefs = await SharedPreferences.getInstance();
-    locale = lc;
-    prefs.setString('languageCode', locale.languageCode);
   }
 
-/*
-  Future<void> setLocale(String languageCode) async {
-    if (!L10n.all.contains(Locale(languageCode))) {
-      throw ArgumentError("language code $languageCode is not supported for this application");
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    locale = Locale(languageCode);
-    prefs.setString('languageCode', languageCode);
-    notifyListeners();
-  }
- */
-
-/*
-  Future<void> loadColorMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    isDark = prefs.getBool('isDark') ?? false;
-    // notifyListeners(); // not necessary to define another one because it has been already defined in isDark setter
+  void setLocale(Locale otherLocale) {
+    setPrefLocale(otherLocale);
+    locale = otherLocale;
   }
 
-  Future<void> switchColorMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    isDark = !(prefs.getBool('isDark') ?? false);
-    prefs.setBool('isDark', isDark);
-    // notifyListeners(); // not necessary to define another one because it has been already defined in isDark setter
-  }
-
-  void switchColorMode2()  {
-    isDark = !isDark;
-    notifyListeners();
-  }
-
-  Future<void> loadLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    locale = Locale(prefs.getString('languageCode') ?? 'en');
-    // notifyListeners(); // not necessary to define another one because it has been already defined in locale setter
-  }
-
-  Future<void> setLocale(Locale lc) async {
-    // checks if the given language code is supported by this
-    // application (checks if defined in class lib/l10n/L10n.dart)
-    if (!L10n.all.contains(lc)) {
-      throw ArgumentError("language code ${lc.languageCode} is not supported for this application");
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    locale = lc;
-    prefs.setString('languageCode', lc.languageCode);
-    // notifyListeners(); // not necessary to define another one because it has been already defined in locale setter
-  }
- */
-
-  /// *********************************
-  /// transaction controller
-  /// *********************************
   Future<void> getAllTransactions() async {
     requestData = await TransactionService.getAllTransactions();
-    // notifyListeners();
-
-    /**
-     * transactions = data
-        .map((tr) => Transaction(
-        id: tr['id'],
-        name: tr['name'],
-        reason: tr['reason'],
-        amount: tr['amount'],
-        imagePath: tr['imagePath'],
-        date: tr['date']))
-        .toList();
-        notifyListeners();
-     */
   }
 
   Future<void> getAllWeekTransactions() async {
@@ -220,6 +161,41 @@ class TransactionProvider extends ChangeNotifier {
       );
     }).toList();
 
+    notifyListeners();
+  }
+
+  Future<void> getLastMostExpensiveTransactions() async {
+    final response = await TransactionService.getMostExpensiveTransactionOfMonth();
+    lastMostExpensiveTransactions = [];
+    for (var tr in response) {
+      lastMostExpensiveTransactions.add(Transaction(
+          id: tr['id'],
+          name: tr['name'],
+          reason: tr['reason'],
+          amount: tr['amount'],
+          imagePath: tr['imagePath'],
+          date: tr['date']
+      ));
+    }
+    notifyListeners();
+  }
+
+  Future<void> getTotalMonthAmount() async {
+    final response = await TransactionService.getTotalAmountOfMonth();
+    totalMonthAmount = response[0]['total_month_amount'];
+    notifyListeners();
+  }
+
+  Future<void> getLastTransaction() async {
+    final response = await TransactionService.getLastTransaction();
+    lastTransaction = Transaction(
+      id: response[0]['id'],
+      name: response[0]['name'],
+      reason: response[0]['reason'],
+      amount: response[0]['amount'],
+      imagePath: response[0]['imagePath'],
+      date: response[0]['date']
+    );
     notifyListeners();
   }
 

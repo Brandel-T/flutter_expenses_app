@@ -72,6 +72,33 @@ class TransactionService {
     );
   }
 
+  /// get the last 10 most expensive transactions of the current month
+  static Future<List<Map<String, dynamic>>> getMostExpensiveTransactionOfMonth() async {
+    final db = await TransactionService.openDB();
+    const sql = '''SELECT DISTINCT * FROM $TABLE_NAME
+                   WHERE STRFTIME('%m', DATE(date)) = STRFTIME('%m', DATE('now'))
+                   ORDER BY amount DESC
+                   LIMIT 10''';
+    return db.rawQuery(sql);
+  }
+
+  /// get total amount of the month
+  static Future getTotalAmountOfMonth() async {
+    final db = await TransactionService.openDB();
+    return db.rawQuery('''
+      SELECT SUM(amount) as total_month_amount
+      FROM $TABLE_NAME
+      WHERE STRFTIME('%m', DATE(date)) = STRFTIME('%m', DATE('now'))
+    ''');
+  }
+
+  /// get the last transaction
+  static Future getLastTransaction() async {
+    final db = await TransactionService.openDB();
+    // String sql = 'SELECT * FROM $TABLE_NAME ORDER BY DATE(date) DESC LIMIT 1';
+    return db.query(TABLE_NAME, orderBy: 'DATE(date) DESC', limit: 1);
+  }
+
   /// get the total amount of transactions per month grouped by month
   static Future<List<Map<String, dynamic>>> findMaxAmountPerMonth() async {
     final db = await TransactionService.openDB();

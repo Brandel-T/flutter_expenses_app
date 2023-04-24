@@ -1,9 +1,12 @@
-import 'dart:io';
+import 'package:expenses_app_2/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
+
+// custom theme
+import '../../themes/main.dart' as main;
+import '../transaction_detail.dart';
 
 class ExpensesWeekTab extends StatefulWidget {
   const ExpensesWeekTab({Key? key}) : super(key: key);
@@ -26,7 +29,9 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
           builder: (context, appProvider, child) {
             final groupedTransactions = appProvider.transactions_per_week;
 
-            return ListView.builder(
+            return groupedTransactions.isEmpty
+                ? const Center(child: Text('No entries'),)
+                : ListView.builder(
               itemCount: groupedTransactions.length,
               itemBuilder: (context, index) {
                 final weekTransactions =
@@ -35,8 +40,8 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
 
                 // format the total amount to two decimal places
                 final totalAmount =
-                    NumberFormat(".0#", appProvider.locale.countryCode)
-                        .format(groupedTransactions[index].totalAmount);
+                NumberFormat(".0#", appProvider.locale.countryCode)
+                    .format(groupedTransactions[index].totalAmount);
 
                 return Column(
                   children: [
@@ -58,72 +63,24 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
                           )
                         ],
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Column(
-                          children: weekTransactions.map(
-                            (transaction) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    child: SizedBox(
-                                      child: Image.file(
-                                          File(transaction["imagePath"])),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    transaction["name"],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(transaction["reason"]),
-                                      Text(
-                                        DateFormat.yMEd(
-                                                appProvider.locale.countryCode)
-                                            .format(DateTime.parse(
-                                                transaction["date"])),
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .tertiary,
-                                            fontSize: 11),
-                                      ),
-                                    ],
-                                  ),
-                                  trailing: Text(
-                                    "${transaction["amount"]} €",
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                  onTap: () {
-                                    // TODO: show detail of the selected transaction
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TransactionDetail(index: index),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ).toList(),
-                        ),
+                    ),Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: Column(
+                        children: weekTransactions.map( (transaction) {
+                          return _transactionItem(
+                              context,
+                              provider: appProvider,
+                              transaction: Transaction(
+                                  id: transaction['id'],
+                                  name: transaction['name'],
+                                  reason: transaction['reason'],
+                                  amount: transaction['amount'],
+                                  imagePath: transaction['imagePath'],
+                                  date: transaction['date']
+                              )
+                          );
+                        },
+                        ).toList(),
                       ),
                     ),
                   ],
@@ -133,6 +90,87 @@ class _ExpensesWeekTabState extends State<ExpensesWeekTab> {
           },
         );
       },
+    );
+  }
+
+  Widget _transactionItem(
+      BuildContext context, {
+        required TransactionProvider provider,
+        required Transaction transaction,
+      }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          TransactionDetail.routeName,
+          arguments: Transaction(
+            id: transaction.id,
+            name: transaction.name,
+            reason: transaction.reason,
+            amount: transaction.amount,
+            imagePath: transaction.imagePath,
+            date: transaction.date,
+          ),
+        );
+      },
+      child: Container(
+        height: main.transactionHeight,
+        width: double.infinity,
+        margin: const EdgeInsets.only(left: main.horizontalOffset/2, right: main.horizontalOffset/2, bottom: main.verticalOffset),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(main.transactionRadius),
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.7),
+          boxShadow: const [
+            main.boxShadow
+          ],
+        ),
+        constraints: const BoxConstraints(minHeight: main.transactionHeight),
+        clipBehavior: Clip.none,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+          children: [
+            /*
+            CircleAvatar(
+              backgroundColor: Colors.transparent,
+              child: SizedBox(
+                child: Image.file(
+                    File(transaction.imagePath)),
+              ),
+            ),
+             */
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat.yMEd(
+                        provider.locale.countryCode)
+                        .format(DateTime.parse(
+                        transaction.date)),
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .tertiary,
+                        fontSize: 11),
+                  ),
+                  Expanded(
+                    child: Container(
+                        constraints: const BoxConstraints(maxWidth: 250),
+                        child: Text(transaction.name, style: Theme.of(context).textTheme.titleMedium,)),
+                  ),
+                  Expanded(child: Text(transaction.reason)),
+                  // Text(reason!, style: Theme.of(context).textTheme.bodyMedium,),
+                ],
+              ),
+            ),
+            Text(NumberFormat.currency(locale: provider.locale.countryCode, symbol: "€").format(transaction.amount), style: const TextStyle(color: Colors.green, fontSize: 14.0, fontWeight: FontWeight.w400),)
+          ],
+        ),
+      ),
     );
   }
 }
