@@ -118,5 +118,13 @@
     "lastTransaction": "Last transaction",
     "@lastTransaction": {
         "description": "transaction of this month"
+    },
+    "homeScreenNoEntryInformation": "No transaction found. Click on continue button to add one",
+    "@homeScreenNoEntryInformation": {
+        "description": "No transaction information in home screen"
+    },
+    "noDataForDashboard": "Add new transaction(s) to display a dashboard",
+    "@noDataForDashboard": {
+        "description": "Inforamtion: no data to display the dashboard"
     }
 }

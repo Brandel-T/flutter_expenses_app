@@ -105,16 +105,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottom: -60,
                       left: 0,
                       right: 0,
-                      child: _transactionItem(
+                      child: lastTransaction != null
+                          ? _transactionItem(
                         context,
-                        date: DateFormat.yMEd(appProvider.locale.countryCode).format(DateTime.parse(lastTransaction?.date ?? "")),
-                        name: "${lastTransaction?.name}",
+                        date: DateFormat.yMEd(appProvider.locale.countryCode).format(DateTime.parse(lastTransaction?.date ?? DateTime.now().toIso8601String())),
+                        name: lastTransaction?.name ?? AppLocalizations.of(context)!.transaction,
                         amount: NumberFormat.currency(symbol: "€", locale: appProvider.locale.countryCode).format(lastTransaction?.amount ?? 0),
-                        reason: lastTransaction?.reason,
+                        reason: lastTransaction?.reason ?? AppLocalizations.of(context)!.reason,
                         color: appProvider.isDark
                             ? Theme.of(context).colorScheme.primary
                             : main.lastTransactionContainerBG
-                      ),
+                      )
+                          : _transactionItem(
+                          context,
+                          date: DateFormat.yMEd(appProvider.locale.countryCode).format(DateTime.parse(DateTime.now().toIso8601String())),
+                          name: AppLocalizations.of(context)!.transaction,
+                          amount: '0000.00 €',
+                          reason: AppLocalizations.of(context)!.reason,
+                          color: appProvider.isDark
+                              ? Theme.of(context).colorScheme.primary
+                              : main.lastTransactionContainerBG
+                      )
                     );
                   },
                 ),
@@ -137,14 +148,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   final lastTransactions = appProvider.lastMostExpensiveTransactions;
-                  return lastTransactions.isEmpty
-                      ? Text(AppLocalizations.of(context)!.no_entry)
+                  bool noTransactions = appProvider.lastMostExpensiveTransactions.isEmpty;
+
+                  return noTransactions
+                      ? Center(child: Text(AppLocalizations.of(context)!.homeScreenNoEntryInformation))
                       : ListView.builder(
                     itemCount: lastTransactions.length,
                     itemBuilder: (context, index) {
                       return _transactionItem(
                           context,
-                          date: DateFormat.yMEd(appProvider.locale.countryCode).format(DateTime.parse(lastTransactions[index].date)),
+                          date: DateFormat.yMEd(appProvider.locale.countryCode).format(DateTime.parse(noTransactions ? lastTransactions[index].date : DateTime.now().toIso8601String())),
                           name: lastTransactions[index].name,
                           reason: lastTransactions[index].reason,
                           amount: NumberFormat.currency(symbol: "€", locale: appProvider.locale.countryCode).format(lastTransactions[index].amount)
@@ -175,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
     BuildContext context, {
     required String date,
     required String name,
-    String? reason,
+    required String reason,
     required String amount,
     Color? color,
   }) {
@@ -204,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     flex: 1,
                     child: Text(date, style: TextStyle(color: Theme.of(context).hintColor, fontSize: 11),)),
                 Expanded(child: Text(name, style: Theme.of(context).textTheme.titleMedium,)),
-                Flexible(fit: FlexFit.tight, child: Text(reason!, style: Theme.of(context).textTheme.bodyMedium,)),
+                Flexible(fit: FlexFit.tight, child: Text(reason, style: Theme.of(context).textTheme.bodyMedium,)),
               ],
             ),
           ),

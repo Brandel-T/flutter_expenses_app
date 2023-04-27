@@ -28,5 +28,7 @@
     "next": "Weiter",
     "moneySaved": "Gespart +",
     "moneySpent": "Mehr ausgegeben",
-    "lastTransaction": "Letze Transaktion"
+    "lastTransaction": "Letze Transaktion",
+    "homeScreenNoEntryInformation": "Keine Transaktion gefunden. Klicke auf Weiter, um eine neue hinzuf\u00F6gen",
+    "noDataForDashboard": "F\u00F6ge eine neue Transaktion hinzu, um das Dashboard anzuzeigen"
 }

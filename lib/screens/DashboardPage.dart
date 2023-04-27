@@ -25,7 +25,9 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.dashboard)),
-      body: FutureBuilder(
+      body: appProvider.transactions.isEmpty
+        ? Center(child: Text(AppLocalizations.of(context)!.noDataForDashboard))
+        : FutureBuilder(
         future:
             Provider.of<TransactionProvider>(context).getMaxAmountPerMonth(),
         builder: (context, snapshot) {
