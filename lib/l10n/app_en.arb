@@ -106,5 +106,17 @@
     "next": "Continue",
     "@next": {
         "description": "Next step"
-    } 
+    },
+    "moneySaved": "You saved +",
+    "@moneySaved": {
+        "description": "money saved this month"
+    },
+    "moneySpent": "You spent",
+    "@moneySpent": {
+        "description": "money spent this month"
+    },
+    "lastTransaction": "Last transaction",
+    "@lastTransaction": {
+        "description": "transaction of this month"
+    }
 }

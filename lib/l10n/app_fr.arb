@@ -25,5 +25,8 @@
     "no_entry": "Aucune transaction",
     "home_screen_header_title": "Montant total de ce mois",
     "most_expensive_transactions": "Achats les plus co\u00FBteux",
-    "next": "Continue"
+    "next": "Continue",
+    "moneySaved": "Tu as \u00e9pargn\u00e9 +",
+    "moneySpent": "Tu as d\u00e9pens\u00e9",
+    "lastTransaction": "Derniere transaction"
 }

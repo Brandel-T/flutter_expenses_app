@@ -50,6 +50,8 @@ flutter:
   assets:
     - assets/images/default_image_icon.svg
     - assets/images/buy-online.gif
+    - assets/images/icon_money_spent.gif
+    - assets/images/icon_money_saved.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

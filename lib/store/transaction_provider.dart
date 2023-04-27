@@ -86,6 +86,18 @@ class TransactionProvider extends ChangeNotifier {
 
   Future<void> getAllTransactions() async {
     requestData = await TransactionService.getAllTransactions();
+    for (final tr in requestData) {
+      transactions.add(Transaction(
+          id: tr['id'],
+          name: tr['name'],
+          reason: tr['reason'],
+          amount: tr['amount'],
+          imagePath: tr['imagePath'],
+          date: tr['date'],
+        )
+      );
+    }
+    notifyListeners();
   }
 
   Future<void> getAllWeekTransactions() async {
@@ -222,6 +234,9 @@ class TransactionProvider extends ChangeNotifier {
         imagePath: imagePath,
         date: date);
     transactions.add(newTransaction);
+    getAllWeekTransactions();
+    getAllMonthTransactions();
+    getAllYearTransactions();
 
     try {
       TransactionService.insertTransaction(newTransaction);
@@ -236,6 +251,9 @@ class TransactionProvider extends ChangeNotifier {
       transactions.removeWhere((element) => element.id == id);
       TransactionService.deleteTransaction(id);
       notifyListeners();
+      getAllWeekTransactions();
+      getAllMonthTransactions();
+      getAllYearTransactions();
     } catch (e) {
       debugPrint('can not delete from the db $e');
     }
@@ -245,6 +263,9 @@ class TransactionProvider extends ChangeNotifier {
     try {
       TransactionService.updateTransaction(newTransactionData);
       notifyListeners();
+      getAllWeekTransactions();
+      getAllMonthTransactions();
+      getAllYearTransactions();
     } catch (e) {
       debugPrint('can not update in the db $e');
     }
@@ -252,6 +273,7 @@ class TransactionProvider extends ChangeNotifier {
 
   Future<void> getMaxAmountPerMonth() async {
     List<Map<String, dynamic>> data = await TransactionService.findMaxAmountPerMonth();
+    maxAmountPerMonth = [];
     for (int i = 0; i < data.length; ++i) {
       MTransactionGroupedAmountData value = MTransactionGroupedAmountData(
         periodDate: data[i]['month'],

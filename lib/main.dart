@@ -22,7 +22,8 @@ void main() async {
     ChangeNotifierProvider(
       create: (BuildContext context) => TransactionProvider()
                                         ..loadColorMode()
-                                        ..loadLocale(),
+                                        ..loadLocale()
+                                        ..getAllTransactions(),
       child: const MyApp(),
     ),
   );
