@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/l10n.dart';
 import '../store/transaction_provider.dart';
@@ -14,21 +13,6 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-
-  Future<void> _setPrefLocale(Locale lc) async {
-    if (!L10n.all.contains(lc)) {
-      throw ArgumentError("language code ${lc.languageCode} is not supported for this application");
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('languageCode', lc.languageCode);
-  }
-
-  Future<void> _setPrefColorMode(bool isDark) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isDark', isDark);
-  }
-
 
   @override
   Widget build(BuildContext context) {

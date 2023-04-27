@@ -9,15 +9,19 @@ import '../l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/transaction_per_year.dart';
+import '../models/transaction_amount_grouped_data.dart';
 
 class TransactionProvider extends ChangeNotifier {
   bool _isDark = false;
   Locale _locale = const Locale('en');
+
   List<Map<String, dynamic>> requestData = [];
   List<Transaction> transactions = [];
   List<MTransactionPerWeek> transactions_per_week = [];
   List<MTransactionPerMonth> transactions_per_month = [];
   List<MTransactionPerYear> transactions_per_year = [];
+  List<MTransactionGroupedAmountData> maxAmountPerMonth = [];
+  List<MTransactionGroupedAmountData> maxAmountPerWeek = [];
   List<Transaction> lastMostExpensiveTransactions = [];
   Transaction? lastTransaction;
   double totalMonthAmount = 0;
@@ -32,12 +36,18 @@ class TransactionProvider extends ChangeNotifier {
   Locale get locale => _locale;
 
   set locale(Locale locale) {
-    if (!L10n.all.contains(locale)) {
-      _locale = const Locale('en');
-    } else {
-      _locale = locale;
-    }
+    _locale = !L10n.all.contains(locale) ? const Locale('en') : locale;
     notifyListeners();
+  }
+
+  void loadColorMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    isDark = prefs.getBool('isDark') ?? false;
+  }
+
+ void loadLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    locale = Locale(prefs.getString('languageCode') ?? 'en');
   }
 
   Future<void> loadPrefColorMode() async {
@@ -76,6 +86,18 @@ class TransactionProvider extends ChangeNotifier {
 
   Future<void> getAllTransactions() async {
     requestData = await TransactionService.getAllTransactions();
+    for (final tr in requestData) {
+      transactions.add(Transaction(
+          id: tr['id'],
+          name: tr['name'],
+          reason: tr['reason'],
+          amount: tr['amount'],
+          imagePath: tr['imagePath'],
+          date: tr['date'],
+        )
+      );
+    }
+    notifyListeners();
   }
 
   Future<void> getAllWeekTransactions() async {
@@ -102,7 +124,6 @@ class TransactionProvider extends ChangeNotifier {
         weekTransactions: e.value,
       );
     }).toList();
-
     notifyListeners();
   }
 
@@ -213,6 +234,9 @@ class TransactionProvider extends ChangeNotifier {
         imagePath: imagePath,
         date: date);
     transactions.add(newTransaction);
+    getAllWeekTransactions();
+    getAllMonthTransactions();
+    getAllYearTransactions();
 
     try {
       TransactionService.insertTransaction(newTransaction);
@@ -227,6 +251,9 @@ class TransactionProvider extends ChangeNotifier {
       transactions.removeWhere((element) => element.id == id);
       TransactionService.deleteTransaction(id);
       notifyListeners();
+      getAllWeekTransactions();
+      getAllMonthTransactions();
+      getAllYearTransactions();
     } catch (e) {
       debugPrint('can not delete from the db $e');
     }
@@ -236,8 +263,24 @@ class TransactionProvider extends ChangeNotifier {
     try {
       TransactionService.updateTransaction(newTransactionData);
       notifyListeners();
+      getAllWeekTransactions();
+      getAllMonthTransactions();
+      getAllYearTransactions();
     } catch (e) {
       debugPrint('can not update in the db $e');
     }
+  }
+
+  Future<void> getMaxAmountPerMonth() async {
+    List<Map<String, dynamic>> data = await TransactionService.findMaxAmountPerMonth();
+    maxAmountPerMonth = [];
+    for (int i = 0; i < data.length; ++i) {
+      MTransactionGroupedAmountData value = MTransactionGroupedAmountData(
+        periodDate: data[i]['month'],
+        periodAmount: data[i]['month_total_amount'],
+      );
+      maxAmountPerMonth.add(value);
+    }
+    maxAmountPerMonth.sort((a, b) => a.compareTo(b)); // ! IMPORTANT
   }
 }

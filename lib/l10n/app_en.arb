@@ -35,6 +35,10 @@
     "@this_year": {
         "description": "this year"
     },
+    "this_month": "This month",
+    "@this_month": {
+        "description": "this month"
+    },
     "at": "At",
     "@at": {
         "description": "date the transaction"
@@ -102,5 +106,17 @@
     "next": "Continue",
     "@next": {
         "description": "Next step"
-    } 
+    },
+    "moneySaved": "You saved +",
+    "@moneySaved": {
+        "description": "money saved this month"
+    },
+    "moneySpent": "You spent",
+    "@moneySpent": {
+        "description": "money spent this month"
+    },
+    "lastTransaction": "Last transaction",
+    "@lastTransaction": {
+        "description": "transaction of this month"
+    }
 }

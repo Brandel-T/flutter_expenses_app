@@ -98,4 +98,16 @@ class TransactionService {
     // String sql = 'SELECT * FROM $TABLE_NAME ORDER BY DATE(date) DESC LIMIT 1';
     return db.query(TABLE_NAME, orderBy: 'DATE(date) DESC', limit: 1);
   }
+
+  /// get the total amount of transactions per month grouped by month
+  static Future<List<Map<String, dynamic>>> findMaxAmountPerMonth() async {
+    final db = await TransactionService.openDB();
+    String sql = '''
+      SELECT STRFTIME('%m', DATE(date)) AS month, SUM(amount) as month_total_amount
+      FROM $TABLE_NAME
+      GROUP BY month
+      ORDER BY month ASC
+    ''';
+    return db.rawQuery(sql);
+  }
 }
