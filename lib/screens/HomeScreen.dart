@@ -41,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBody: true,
       drawerEnableOpenDragGesture: true,
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Expanded(
+      body: SafeArea(
+        bottom: true,
+        top: true,
         child: Column(
           children: [
             Stack(
@@ -82,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Positioned(
-                  top: 30,
+                  top: 20,
                   right: 20,
                   child: GestureDetector(
                     child: appProvider.isDark
