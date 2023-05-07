@@ -30,5 +30,6 @@
     "moneySpent": "Tu as d\u00e9pens\u00e9",
     "lastTransaction": "Derniere transaction",
     "homeScreenNoEntryInformation": "Aucune transaction trouv\u00E9e. Clique sur continuer pour ajouter une transaction",
-    "noDataForDashboard": "Ajoute une Nouvelle transaction pour afficher le dashboard"
+    "noDataForDashboard": "Ajoute une Nouvelle transaction pour afficher le dashboard",
+    "add": "Ajouter"
 }

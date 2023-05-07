@@ -54,18 +54,20 @@ class _TransactionFormState extends State<TransactionForm> {
 
     return Form(
       key: _formKey,
-      child: SizedBox(
+      child: Container(
         width: double.infinity,
+        color: Theme.of(context).colorScheme.background,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 10.0),
+                width: double.infinity,
                 child: Text(
                   "${AppLocalizations.of(context)!.expensesFrom} ${DateFormat.yMMMMd(appProvider.locale.countryCode).format(widget.selectedDay ?? DateTime.now())}",
                   textAlign: TextAlign.start,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary, ),
                 ),
               ),
               _inputField(
@@ -77,6 +79,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
               _inputField(
                   context,
+                  maxLines: 3,
                   _reasonController,
                   const Icon(Icons.question_mark_sharp),
                   AppLocalizations.of(context)!.reason,
@@ -108,16 +111,21 @@ class _TransactionFormState extends State<TransactionForm> {
                                 File(_invoiceImagePath),
                                 fit: BoxFit.cover,
                               )
-                            : Center(
-                                child: Text(
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                              Container(margin: const EdgeInsets.only(right: 10) ,
+                                  child: const Icon(Icons.camera_alt_outlined)),
+                                Text(
                                   AppLocalizations.of(context)!
                                       .take_picture_filed_message,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 15,
                                   ),
-                                ),
-                              ),
+                                )
+                        ],)
                       ),
                     ),
                     Consumer<TransactionProvider>(
@@ -170,12 +178,15 @@ Widget _inputField(
   TextEditingController controller,
   Widget prefixIcon,
   String hintText,
-  TextInputType inputType,
+  TextInputType inputType, {
+    int? maxLines,
+  }
 ) {
   return Container(
     margin: const EdgeInsets.only(top: 10.0),
     child: TextFormField(
       controller: controller,
+      maxLines: maxLines,
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: hintText,

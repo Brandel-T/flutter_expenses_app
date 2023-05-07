@@ -40,24 +40,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Consumer<TransactionProvider>(
       builder: (context, appProvider, child) {
         return Scaffold(
-            drawer: const Drawer(child: SettingsDrawer()),
+            drawer: const Drawer(child: SettingsDrawer(),),
             drawerEnableOpenDragGesture: true,
             appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.homePageTitle),
+              backgroundColor: Colors.transparent,
+              title: Text(AppLocalizations.of(context)!.homePageTitle,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
               actions: [
-                Switch(
-                  value: appProvider.isDark,
-                  onChanged: (value) {
-                    appProvider.setColorMode(value);
-                  },
-                ),
                 GestureDetector(
                   onTap: () {
                     appProvider.setColorMode(!appProvider.isDark);
                   },
-                  child: appProvider.isDark
-                      ? const Icon(Icons.dark_mode_outlined)
-                      : const Icon(Icons.light_mode_outlined),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    child: appProvider.isDark
+                        ? const Icon(Icons.dark_mode_outlined)
+                        : Icon(Icons.light_mode_outlined, color: Theme.of(context).colorScheme.onSurface,),
+                  )
                 )
               ],
             ),

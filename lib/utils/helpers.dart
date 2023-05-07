@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class Fn {
-  Widget _transactionInputField(
-      BuildContext context,
-      TextEditingController controller,
-      Widget prefixIcon,
-      String hintText,
-      TextInputType inputType, {
+class Helpers {
+  static Widget transactionInputField(
+      BuildContext context, {
+      required TextEditingController controller,
+      required String placeholder,
+      required Widget prefixIcon,
+      required TextInputType inputType,
         int? maxLines,
       }
       ) {
@@ -18,7 +18,7 @@ class Fn {
         maxLines: maxLines,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: hintText,
+          hintText: placeholder,
           prefixIcon: prefixIcon,
         ),
         keyboardType: inputType,

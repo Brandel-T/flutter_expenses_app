@@ -1,5 +1,5 @@
 {
-    "homePageTitle": "Add a new transaction",
+    "homePageTitle": "New transaction",
     "@homePageTitle": {
         "description": "description of what to do in first instance when entering the app"
     },
@@ -126,5 +126,9 @@
     "noDataForDashboard": "Add new transaction(s) to display a dashboard",
     "@noDataForDashboard": {
         "description": "Inforamtion: no data to display the dashboard"
+    },
+    "add": "Add",
+    "@add": {
+        "description": "Add"
     }
 }

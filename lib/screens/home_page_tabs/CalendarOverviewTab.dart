@@ -3,6 +3,7 @@ import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/TransactionForm.dart';
 
@@ -26,10 +27,14 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
     showModalBottomSheet(
       context: context,
       elevation: 4,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return SizedBox(
+        return Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
           child: TransactionForm(
             selectedDay: _selectedDay,
             closeModal: close,
@@ -61,8 +66,8 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
                   child: TableCalendar(
                     locale: Localizations.localeOf(context).languageCode,
                     focusedDay: _focusedDay,
-                    firstDay: now,
-                    lastDay: DateTime(now.year + 1),
+                    firstDay: DateTime(now.year - 1),
+                    lastDay: DateTime(now.year, now.month+1),
                     selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
@@ -94,12 +99,13 @@ class _CalendarOverviewTabState extends State<CalendarOverviewTab> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         elevation: 4,
         onPressed: () => addNewTransactionModal(context, closeModal),
         backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Theme.of(context).colorScheme.surface,
-        child: const Icon(Icons.add),
+        foregroundColor: Colors.white.withOpacity(0.8),
+        label: Text(AppLocalizations.of(context)!.add),
+        icon: const Icon(Icons.add),
       ),
       bottomNavigationBar: const BottomNavBar(currentIndex: 0),
     );

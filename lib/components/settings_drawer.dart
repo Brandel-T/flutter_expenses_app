@@ -25,12 +25,30 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         DrawerHeader(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primaryContainer,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.indigo,
+                Colors.indigo[400]!,
+                const Color(0xff6a3de8),
+                const Color(0xff6a3de8).withOpacity(0.99),
+                const Color(0xff6a3de8).withOpacity(0.7),
+                const Color(0x0ff536fe).withOpacity(0.3),
+              ]
+            ),
           ),
           child: Center(
-            child: Text("Expenses App", style: Theme.of(context).textTheme.displaySmall!,),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(70),
+                child: Image.asset('assets/logo/expenses.png')),
           ),
         ),
-        Padding(padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+        Container(
+          padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -51,7 +69,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         ),
         Divider(color: Theme.of(context).colorScheme.onSurfaceVariant,),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
