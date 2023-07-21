@@ -18,22 +18,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      showSelectedLabels: true,
+      showUnselectedLabels: false,
       items: [
-        // BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Bill'),
         BottomNavigationBarItem(
-            icon: const Icon(Icons.home_filled),
-            label: AppLocalizations.of(context)!.home,),
+          icon: const Icon(Icons.edit_calendar_rounded),
+          label: AppLocalizations.of(context)!.home,
+        ),
         BottomNavigationBarItem(
-            icon: const Icon(Icons.euro),
-            label: AppLocalizations.of(context)!.expenses,),
+          icon: const Icon(Icons.receipt_long_rounded),
+          label: AppLocalizations.of(context)!.expenses,
+        ),
         BottomNavigationBarItem(
-            icon: const Icon(Icons.dashboard),
-            label: AppLocalizations.of(context)!.dashboard,),
+          icon: const Icon(Icons.bar_chart_rounded),
+          label: AppLocalizations.of(context)!.dashboard,
+        ),
       ],
       currentIndex: widget.currentIndex,
-      elevation: 10,
-      showUnselectedLabels: true,
-      iconSize: 28.0,
+      elevation: 8,
+      iconSize: 24.0,
       onTap: (screenIndex) async {
         switch (screenIndex) {
           case 0:

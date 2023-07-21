@@ -47,7 +47,7 @@
     "@home": {
         "description": "Homepage name"
     },
-    "expenses": "Expenses",
+    "expenses": "Spending",
     "@expenses": {
         "description": "Expenses page name"
     },
@@ -118,5 +118,21 @@
     "lastTransaction": "Last transaction",
     "@lastTransaction": {
         "description": "transaction of this month"
+    },
+    "total_month_spending": "Total spent this month",
+    "@total_month_spending": {
+        "description": "Total spent this month"
+    },
+    "month_most_expensive_transaction": "Most expensive transactions this month",
+    "@month_most_expensive_transaction": {
+        "description": "Most expensive expenses this month"
+    },
+    "no_picture_taken": "Bill is missing",
+    "@no_picture_taken": {
+        "description": "Bill is missing"
+    },
+    "transaction_deleted": "Transaction deleted",
+    "@transaction_deleted": {
+        "description": "Transaction deleted"
     }
 }

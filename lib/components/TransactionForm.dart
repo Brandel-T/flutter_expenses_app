@@ -61,11 +61,12 @@ class _TransactionFormState extends State<TransactionForm> {
           child: Column(
             children: [
               Container(
+                width: double.maxFinite,
                 margin: const EdgeInsets.only(top: 10.0),
                 child: Text(
-                  "${AppLocalizations.of(context)!.expensesFrom} ${DateFormat.yMMMMd(appProvider.locale.countryCode).format(widget.selectedDay ?? DateTime.now())}",
+                  DateFormat.yMMMMEEEEd(appProvider.locale.countryCode).format(widget.selectedDay ?? DateTime.now()),
                   textAlign: TextAlign.start,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
               _inputField(
@@ -104,20 +105,26 @@ class _TransactionFormState extends State<TransactionForm> {
                           color: Colors.transparent,
                         ),
                         child: _invoiceImagePath != ""
-                            ? Image.file(
-                                File(_invoiceImagePath),
-                                fit: BoxFit.cover,
-                              )
-                            : Center(
-                                child: Text(
-                                  AppLocalizations.of(context)!
-                                      .take_picture_filed_message,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15,
+                          ? Image.file(
+                              File(_invoiceImagePath),
+                              fit: BoxFit.cover,
+                            )
+                          : Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.camera_alt_outlined),
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .take_picture_filed_message,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 15,
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
+                            ),
                       ),
                     ),
                     Consumer<TransactionProvider>(
@@ -126,7 +133,7 @@ class _TransactionFormState extends State<TransactionForm> {
                           child: Container(
                             height: double.infinity,
                             margin: const EdgeInsets.only(top: 10.0),
-                            child: ElevatedButton(
+                            child: TextButton.icon(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -144,11 +151,11 @@ class _TransactionFormState extends State<TransactionForm> {
                                     _invoiceImagePath,
                                     widget.selectedDay!.toIso8601String(),
                                   );
+                                  widget.closeModal();
                                 }
-
-                                widget.closeModal();
                               },
-                              child: Text(AppLocalizations.of(context)!.save),
+                              label: Text(AppLocalizations.of(context)!.save),
+                              icon: const Icon(Icons.save_outlined),
                             ),
                           ),
                         );

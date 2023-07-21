@@ -28,5 +28,9 @@
     "next": "Weiter",
     "moneySaved": "Gespart +",
     "moneySpent": "Mehr ausgegeben",
-    "lastTransaction": "Letze Transaktion"
+    "lastTransaction": "Letze Transaktion",
+    "total_month_spending": "Gesamtausgaben dieses Monats",
+    "month_most_expensive_transaction": "Teuerste Ausgaben dieses Monats",
+    "no_picture_taken": "Keine Rechnung aufgenommen",
+    "transaction_deleted": "Transaktion gel\u00F6scht"
 }

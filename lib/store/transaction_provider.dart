@@ -199,10 +199,11 @@ class TransactionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getTotalMonthAmount() async {
+  Future<double> getTotalMonthAmount() async {
     final response = await TransactionService.getTotalAmountOfMonth();
     totalMonthAmount = response[0]['total_month_amount'];
     notifyListeners();
+    return totalMonthAmount;
   }
 
   Future<void> getLastTransaction() async {

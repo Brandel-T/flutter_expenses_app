@@ -1,10 +1,13 @@
+import 'package:expenses_app_2/components/BottomNavBar.dart';
 import 'package:expenses_app_2/components/settings_drawer.dart';
-import 'package:expenses_app_2/screens/home_page_tabs/CalendarOverviewTab.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import '../components/TransactionForm.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,13 +18,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final String _uploadedBillImagePath = "";
-  DateTime? _selectedDay;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  
+  DateTime? _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
   void dispose() {
@@ -42,38 +42,118 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         return Scaffold(
             drawer: const Drawer(child: SettingsDrawer()),
             drawerEnableOpenDragGesture: true,
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.homePageTitle),
-              actions: [
-                Switch(
-                  value: appProvider.isDark,
-                  onChanged: (value) {
-                    appProvider.setColorMode(value);
-                  },
-                ),
-                GestureDetector(
-                  onTap: () {
-                    appProvider.setColorMode(!appProvider.isDark);
-                  },
-                  child: appProvider.isDark
-                      ? const Icon(Icons.dark_mode_outlined)
-                      : const Icon(Icons.light_mode_outlined),
-                )
-              ],
-            ),
-            body: Column(
-              children: [
-                Image.asset('assets/images/buy-online.gif', height: 250),
-                Flexible(
-                  child: CalendarOverviewTab(
-                    imagePath: _uploadedBillImagePath,
-                    setSelectedDay: _setSelectedDay,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            body: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  pinned: true,
+                  expandedHeight: 250,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      color: Theme.of(context).colorScheme.background,
+                      child: Image.asset('assets/images/buy-online.gif'),
+                    ),
                   ),
-                )
-              ],
+                  title: Text(AppLocalizations.of(context)!.transaction, style: TextStyle(color: Theme.of(context).indicatorColor),),
+                  leading: Icon(Icons.menu, color: Theme.of(context).indicatorColor,),
+                  actions: [
+                    Switch(
+                      value: appProvider.isDark,
+                      onChanged: (value) {
+                        appProvider.setColorMode(value);
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        appProvider.setColorMode(!appProvider.isDark);
+                      },
+                      child: appProvider.isDark
+                          ? const Icon(Icons.dark_mode_outlined)
+                          : Icon(Icons.light_mode_outlined, color: Theme.of(context).indicatorColor),
+                    ),
+                  ],
+                ),
+                SliverToBoxAdapter(child: _getCalendar()),
+              ]
             ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 4,
+        onPressed: () => _addNewTransactionModal(context, _closeModal),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).colorScheme.surface,
+        child: const Icon(Icons.add),
+      ),
+          bottomNavigationBar: const BottomNavBar(currentIndex: 0),
         );
       },
     );
+  }
+  
+  void _closeModal() {
+    Navigator.of(context).pop();
+  }
+
+  void _addNewTransactionModal(BuildContext context, Function close) {
+    showModalBottomSheet(
+      context: context,
+      elevation: 4,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: TransactionForm(
+            selectedDay: _selectedDay,
+            closeModal: close,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _getCalendar() {
+    DateTime now = DateTime.now();
+
+    return Consumer<TransactionProvider>(
+        builder: (context, cameraStore, child) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            child: TableCalendar(
+              locale: Localizations.localeOf(context).languageCode,
+              focusedDay: _focusedDay,
+              firstDay: DateTime(now.year-1),
+              lastDay: DateTime(now.year + 1),
+              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _focusedDay = focusedDay;
+                  _selectedDay = selectedDay;
+                });
+              },
+              calendarFormat: _calendarFormat,
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              },
+              onPageChanged: (focusedDay) {_focusedDay = focusedDay;},
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              shouldFillViewport: true,
+              onDayLongPressed: (selectedDay, focusedDay) => _addNewTransactionModal(context, _closeModal),
+              headerStyle: HeaderStyle(
+                titleTextStyle: Theme.of(context).textTheme.headlineMedium!,
+                formatButtonDecoration: BoxDecoration(border: Border.all(color: Colors.transparent),),
+                formatButtonTextStyle: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w500, fontSize: 16)
+              ),
+              daysOfWeekStyle: DaysOfWeekStyle(weekdayStyle: Theme.of(context).textTheme.titleSmall!),
+            ),
+          );
+        },
+      );
   }
 }

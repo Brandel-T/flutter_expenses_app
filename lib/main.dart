@@ -56,8 +56,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: l10n.L10n.all,
-          home: const HomeScreen(),
-          // home: const HomePage(),
+          home: const HomePage(),
           routes: {
             TransactionDetail.routeName: (context) => const TransactionDetail(),
           },
