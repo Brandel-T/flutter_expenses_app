@@ -1,5 +1,7 @@
 import 'package:expenses_app_2/components/BottomNavBar.dart';
 import 'package:expenses_app_2/models/transaction.dart';
+import 'package:expenses_app_2/models/transaction_per_month.dart';
+import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../models/transaction_amount_grouped_data.dart';
+import 'HomePage.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -19,12 +22,20 @@ class _DashboardPageState extends State<DashboardPage> {
   static const int _pageIndex = 2;
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      Provider.of<TransactionProvider>(context, listen: false).getLastMostExpensiveTransactions();
+      Provider.of<TransactionProvider>(context, listen: false).getTotalMonthAmount();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<TransactionProvider>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.dashboard)),
       body: appProvider.transactions.isEmpty
         ? Center(child: Text(AppLocalizations.of(context)!.noDataForDashboard))
         : FutureBuilder(
@@ -34,153 +45,149 @@ class _DashboardPageState extends State<DashboardPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           }
-
-          Transaction lastTransaction = appProvider.transactions.last;
-          late Transaction secondLastTransaction;
-          double amountDifference = lastTransaction.amount;
+          if (appProvider.transactions.isEmpty) {
+            return Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(AppLocalizations.of(context)!.no_entry),
+                TextButton(
+                  onPressed: () => {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const HomePage(),)
+                    )
+                  },
+                  child: Text(AppLocalizations.of(context)!.home),
+                ),
+              ],
+            ),);
+          }
+          List<MTransactionPerMonth> monthTransaction = appProvider.transactions_per_month;
+          double lastTransactionAmount = appProvider.maxAmountPerMonth.last.periodAmount;
+          double secondLastTransactionAmount = 0;
+          double amountDifference = lastTransactionAmount;
           bool badMonth = false;
-          bool goodMonth = !badMonth;
           bool onlyOneMonth = false;
+          int percentage = 100; // default 100%
 
           if (appProvider.transactions.length > 1) {
-            secondLastTransaction =
-                appProvider.transactions[appProvider.transactions.length - 2];
+            secondLastTransactionAmount = appProvider.maxAmountPerMonth[appProvider.maxAmountPerMonth.length-2].periodAmount;
 
             // more expenses than the second past month: bad month = no money saved
-            badMonth = lastTransaction.amount > secondLastTransaction.amount;
+            badMonth = lastTransactionAmount > secondLastTransactionAmount;
             amountDifference = badMonth
-                ? amountDifference - secondLastTransaction.amount
-                : secondLastTransaction.amount - amountDifference;
-            goodMonth = !badMonth;
+                ? amountDifference - secondLastTransactionAmount
+                : secondLastTransactionAmount - amountDifference;
+                percentage = (lastTransactionAmount * 100/(lastTransactionAmount + secondLastTransactionAmount)).round();
           } else {
             onlyOneMonth = true;
           }
 
-          return Column(children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                children: [
-                  onlyOneMonth
-                      ? Expanded(
-                          flex: 1,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                badMonth
-                                    ? Image.asset(
-                                        'assets/images/icon_money_spent.gif',
-                                        width: 100,
-                                      )
-                                    : Image.asset(
-                                        'assets/images/icon_money_saved.gif',
-                                        width: 100),
-                                Text("Last transactions",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary)),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(DateFormat.yMMMM(
-                                              appProvider.locale.languageCode)
-                                          .format(DateTime.parse(
-                                              lastTransaction.date))),
-                                      Text(_formatToCurrency(
-                                          lastTransaction.amount), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600,),),
-                                    ]),
-                              ]),
-                        )
-                      : Expanded(
-                          flex: 1,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                badMonth && !onlyOneMonth
-                                    ? Image.asset(
-                                        'assets/images/icon_money_spent.gif',
-                                        width: 100,
-                                      )
-                                    : Image.asset(
-                                        'assets/images/icon_money_saved.gif',
-                                        width: 100),
-                                (() {
-                                  if (onlyOneMonth) {
-                                    return Text("${AppLocalizations.of(context)!.lastTransaction} ${_formatToCurrency(amountDifference)}",
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary));
-                                  } else if (badMonth){
-                                    return Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), color: Colors.redAccent.withOpacity(0.2), child: Text("${AppLocalizations.of(context)!.moneySpent} ${_formatToCurrency(amountDifference)}", style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),),);
-                                  } else {
-                                    return Container(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10), color: Colors.greenAccent.withOpacity(0.2), child: Text("${AppLocalizations.of(context)!.moneySaved} ${_formatToCurrency(amountDifference)}", style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600)),);
-                                  }
-                                }()),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(DateFormat.yMMMM(
-                                              appProvider.locale.languageCode)
-                                          .format(DateTime.parse(
-                                              lastTransaction.date))),
-                                      Icon(!badMonth ? Icons.arrow_upward_outlined : Icons.arrow_downward_outlined, color: badMonth
-                                          ? Colors.red.withOpacity(0.8)
-                                          : Colors.green),
-                                      Text(_formatToCurrency(
-                                          lastTransaction.amount),
-                                        style: TextStyle(
-                                            color: badMonth
-                                                ? Colors.red.withOpacity(0.8)
-                                                : Colors.green),
-                                      ),
-                                    ]),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(DateFormat.yMMMM(
-                                              appProvider.locale.languageCode)
-                                          .format(DateTime.parse(
-                                              secondLastTransaction.date))),
-                                      Icon(badMonth ? Icons.arrow_upward_outlined : Icons.arrow_downward_outlined, color: !badMonth
-                                        ? Colors.red.withOpacity(0.8)
-                                            : Colors.green),
-                                      Text(
-                                        _formatToCurrency(
-                                            secondLastTransaction.amount),
-                                        style: TextStyle(
-                                            color: !badMonth
-                                                ? Colors.red.withOpacity(0.8)
-                                                : Colors.green),
-                                      ),
-                                    ]),
-                              ]),
+          return CustomScrollView(
+            slivers: <Widget> [
+              SliverAppBar(
+                expandedHeight: 130,
+                snap: true,
+                floating: true,
+                stretch: true,
+                backgroundColor: Theme.of(context).colorScheme.background,
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.total_month_spending,
+                      style: TextStyle(fontSize: 15, color: Theme.of(context).colorScheme.onSurface),
+                    ),
+                    Container(
+                      height: 24,
+                      width: 24,
+                      margin: const EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                        color: badMonth || onlyOneMonth ? Colors.red[600]!.withOpacity(0.2) : Colors.green[600]!.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(50)
+                      ),
+                      child: Center(child: badMonth || onlyOneMonth
+                        ? Icon(Icons.arrow_drop_up_outlined, color: Colors.red[700],)
+                        : Icon(Icons.arrow_drop_down_outlined, color: Colors.green[700]),
+                      )
+                    ),
+                    Text(
+                      " $percentage %",
+                      style: TextStyle(color: badMonth || onlyOneMonth ? Colors.red[700] : Colors.green[600]!.withOpacity(0.9), fontSize: 15),
+                    )
+                    
+                  ],
+                ),
+                automaticallyImplyLeading: false,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Transform(
+                    transform: Matrix4.translationValues(-50, 0, 0),
+                    child: ListTile(
+                      title: Text(
+                        NumberFormat.currency(locale: 'de_DE', symbol: '€').format(appProvider.totalMonthAmount),
+                        style: Theme.of(context).textTheme.titleLarge,
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ),
+                  background: Container(color: Theme.of(context).scaffoldBackgroundColor),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: SfCartesianChart(
+                    series: _getSeries(appProvider),
+                    primaryXAxis: DateTimeAxis(
+                      dateFormat: DateFormat.MMM(appProvider.locale.countryCode),
+                      intervalType: DateTimeIntervalType.months,
+                      majorGridLines: const MajorGridLines(width: 0),
+                      edgeLabelPlacement: EdgeLabelPlacement.shift,
+                    ),
+                    primaryYAxis: NumericAxis(labelFormat: '{value}€'),
+                    tooltipBehavior: TooltipBehavior(enable: true),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    AppLocalizations.of(context)!.month_most_expensive_transaction,
+                    style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
+                  ),
+                ),
+              ),
+              SliverList(delegate: SliverChildListDelegate(
+                appProvider.lastMostExpensiveTransactions.map((e) => 
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                          color: Theme.of(context).colorScheme.background,
+                          elevation: 8,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                TransactionDetail.routeName,
+                                arguments: Transaction(reason: e.reason, amount: e.amount, name: e.name, date: e.date, imagePath: e.imagePath, id: e.id)
+                              );
+                            },
+                            child: ListTile(
+                              title: Text(e.name, style: const TextStyle(fontWeight: FontWeight.w400),), 
+                              subtitle: Text(DateFormat.MMMM(appProvider.locale.countryCode).format(DateTime.parse(e.date))),
+                              trailing: Text(
+                                NumberFormat.currency(locale: 'de_DE', symbol: '€').format(e.amount),
+                                style: TextStyle(color: Colors.green[600], fontWeight: FontWeight.w500),),
+                            ),
+                          ),
                         ),
-                  Expanded(flex: 1, child: _getCircularChart(appProvider)),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SfCartesianChart(
-                title: ChartTitle(
-                  text: 'Max expense amount per month',
-                ),
-                series: _getAreaSeries(appProvider),
-                primaryXAxis: DateTimeAxis(
-                  dateFormat: DateFormat.yM(appProvider.locale.countryCode),
-                  intervalType: DateTimeIntervalType.months,
-                  majorGridLines: const MajorGridLines(width: 0),
-                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                ),
-                primaryYAxis: NumericAxis(labelFormat: '{value}€'),
-                tooltipBehavior: TooltipBehavior(enable: true),
-              ),
-            ),
-          ]);
+                      ),
+                    ).toList()
+              ),),
+            ],
+          );
+        
         },
       ),
       bottomNavigationBar: const BottomNavBar(currentIndex: _pageIndex),
@@ -208,10 +215,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  List<LineSeries<MTransactionGroupedAmountData, DateTime>> _getAreaSeries(
+  List<ColumnSeries<MTransactionGroupedAmountData, DateTime>> _getSeries(
       TransactionProvider provider) {
-    return <LineSeries<MTransactionGroupedAmountData, DateTime>>[
-      LineSeries<MTransactionGroupedAmountData, DateTime>(
+    return <ColumnSeries<MTransactionGroupedAmountData, DateTime>>[
+      ColumnSeries<MTransactionGroupedAmountData, DateTime>(
         dataSource: provider.maxAmountPerMonth,
         name: AppLocalizations.of(context)!.expenses,
         xValueMapper: (MTransactionGroupedAmountData data, _) =>
@@ -220,7 +227,8 @@ class _DashboardPageState extends State<DashboardPage> {
             data.periodAmount,
         dataLabelSettings: const DataLabelSettings(isVisible: true, useSeriesColor: true),
         enableTooltip: true,
-        markerSettings: const MarkerSettings(isVisible: true, shape: DataMarkerType.pentagon,)
+        markerSettings: const MarkerSettings(isVisible: true, shape: DataMarkerType.pentagon,),
+        color: Theme.of(context).colorScheme.primary,
       ),
     ];
   }

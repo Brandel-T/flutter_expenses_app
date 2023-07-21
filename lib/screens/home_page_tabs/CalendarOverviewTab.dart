@@ -7,9 +7,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../components/TransactionForm.dart';
 
 class CalendarOverviewTab extends StatefulWidget {
-  const CalendarOverviewTab({super.key, required this.imagePath, required this.setSelectedDay});
-
-  final String imagePath;
+  const CalendarOverviewTab({super.key, required this.setSelectedDay});
   final Function setSelectedDay;
 
   @override

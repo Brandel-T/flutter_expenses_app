@@ -58,7 +58,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Transaction detail")
+        title: Text("Transaction detail"),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, paddingX),
@@ -71,7 +71,17 @@ class _TransactionDetailState extends State<TransactionDetail> {
                   Positioned.fill(
                     child: SizedBox(
                       width: double.infinity,
-                      child: imagePath == "" ? const Text('No taken picture') : Image.file(
+                      child: imagePath == "" 
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.no_photography_outlined, size: 100, weight: 0.5),
+                              Text(AppLocalizations.of(context)!.no_picture_taken),
+                            ],
+                          ),
+                        )
+                      : Image.file(
                         fit: BoxFit.cover,
                         File(imagePath),
                       ),
@@ -101,21 +111,14 @@ class _TransactionDetailState extends State<TransactionDetail> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //Expanded(
-                      //                         flex: 1,
-                      //                         child: TransactionEntry(
-                      //                           context,
-                      //                           "${AppLocalizations.of(context)!.at} ",
-                      //                           date.toString()),
-                      //                       ),
-
                       Expanded(
                         flex: 1,
                         child: TransactionEntry(
                           context,
                           _transactionController,
                           "${AppLocalizations.of(context)!.transaction} ",
-                          name),
+                          name,
+                        ),
                       ),
                       Expanded(
                         flex: 1,
@@ -123,7 +126,8 @@ class _TransactionDetailState extends State<TransactionDetail> {
                           context,
                           _reasonController,
                           AppLocalizations.of(context)!.reason,
-                          reason),
+                          reason,
+                        ),
                       ),
                       Expanded(
                         flex: 1,
@@ -131,8 +135,9 @@ class _TransactionDetailState extends State<TransactionDetail> {
                           context,
                           _amountController,
                           "${AppLocalizations.of(context)!.amount} ",
-                          "$amount €"),
-                      )
+                          "$amount €",
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -176,7 +181,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
                       appProvider.deleteTransaction(id);
                       Navigator.of(context).pop();
                       final snackBar = SnackBar(
-                        content: const Text('Transaction deleted!'),
+                        content: Text("${ AppLocalizations.of(context)!.transaction_deleted }!"),
                         action: SnackBarAction(
                           label: 'Undo',
                           onPressed: () {

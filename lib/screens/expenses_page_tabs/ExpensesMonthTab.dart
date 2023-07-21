@@ -1,15 +1,11 @@
-import 'dart:io';
-
+import 'package:expenses_app_2/screens/HomePage.dart';
 import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/transaction.dart';
-
-// custom theme
-import '../../themes/main.dart' as main;
 
 class ExpensesMonthTab extends StatefulWidget {
   const ExpensesMonthTab({Key? key}) : super(key: key);
@@ -33,7 +29,22 @@ class _ExpensesMonthTabState extends State<ExpensesMonthTab> {
             final groupedTransactions = appProvider.transactions_per_month;
 
             return groupedTransactions.isEmpty
-                ? const Center(child: Text('No entries'),)
+                ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(AppLocalizations.of(context)!.no_entry),
+                      TextButton(
+                        onPressed: () => {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const HomePage(),)
+                          )
+                        },
+                        child: Text(AppLocalizations.of(context)!.home),
+                      ),
+                    ],
+                  ),
+                )
                 : ListView.builder(
               itemCount: groupedTransactions.length,
               itemBuilder: (context, index) {
@@ -93,83 +104,43 @@ class _ExpensesMonthTabState extends State<ExpensesMonthTab> {
   }
 
   Widget _transactionItem(
-      BuildContext context, {
-        required TransactionProvider provider,
-        required Transaction transaction,
-      }) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          TransactionDetail.routeName,
-          arguments: Transaction(
-            id: transaction.id,
-            name: transaction.name,
-            reason: transaction.reason,
-            amount: transaction.amount,
-            imagePath: transaction.imagePath,
-            date: transaction.date,
+  BuildContext context, {
+    required TransactionProvider provider,
+    required Transaction transaction,
+  }) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              TransactionDetail.routeName,
+              arguments: Transaction(
+                reason: transaction.reason,
+                amount: transaction.amount,
+                name: transaction.name,
+                date: transaction.date,
+                imagePath: transaction.imagePath,
+                id: transaction.id
+              ),
+            );
+          },
+          child: ListTile(
+            leading: Text(
+              DateFormat.MMMd(provider.locale.countryCode).format(DateTime.parse(transaction.date)),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Theme.of(context).hintColor)
+            ),
+            title: Text(transaction.name, style: const TextStyle(fontWeight: FontWeight.w400),), 
+            subtitle: Text(transaction.reason, style: TextStyle(color: Theme.of(context).hintColor)),
+            trailing: Text(
+              NumberFormat.currency(locale: 'de_DE', symbol: '€').format(transaction.amount),
+              style: TextStyle(color: Colors.green[400], fontWeight: FontWeight.w400),
+            ),
+            tileColor: Theme.of(context).colorScheme.background,
           ),
-        );
-      },
-      child: Container(
-        height: main.transactionHeight,
-        width: double.infinity,
-        margin: const EdgeInsets.only(left: main.horizontalOffset/2, right: main.horizontalOffset/2, bottom: main.verticalOffset),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(main.transactionRadius),
-          color: Theme.of(context).colorScheme.surface.withOpacity(0.7),
-          boxShadow: const [
-            main.boxShadow
-          ],
         ),
-        constraints: const BoxConstraints(minHeight: main.transactionHeight),
-        clipBehavior: Clip.none,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-          children: [
-            /*
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: SizedBox(
-                child: Image.file(
-                    File(transaction.imagePath)),
-              ),
-            ),
-             */
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat.yMEd(
-                        provider.locale.countryCode)
-                        .format(DateTime.parse(
-                        transaction.date)),
-                    style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .tertiary,
-                        fontSize: 11),
-                  ),
-                  Expanded(
-                    child: Container(
-                        constraints: const BoxConstraints(maxWidth: 250),
-                        child: Text(transaction.name, style: Theme.of(context).textTheme.titleMedium,)),
-                  ),
-                  Expanded(child: Text(transaction.reason)),
-                  // Text(reason!, style: Theme.of(context).textTheme.bodyMedium,),
-                ],
-              ),
-            ),
-            Text(NumberFormat.currency(locale: provider.locale.countryCode, symbol: "€").format(transaction.amount), style: const TextStyle(color: Colors.green, fontSize: 14.0, fontWeight: FontWeight.w400),)
-          ],
-        ),
-      ),
+        Divider(color: Theme.of(context).dividerColor, indent: 50, height: 1,)
+      ],
     );
   }
 }
