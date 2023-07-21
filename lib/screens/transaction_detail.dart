@@ -72,10 +72,15 @@ class _TransactionDetailState extends State<TransactionDetail> {
                     child: SizedBox(
                       width: double.infinity,
                       child: imagePath == "" 
-                      ? Center(child: Column(children: [
-                          const Icon(Icons.no_photography_outlined, size: 100, weight: 0.5),
-                          Text(AppLocalizations.of(context)!.no_picture_taken),
-                        ]),)
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.no_photography_outlined, size: 100, weight: 0.5),
+                              Text(AppLocalizations.of(context)!.no_picture_taken),
+                            ],
+                          ),
+                        )
                       : Image.file(
                         fit: BoxFit.cover,
                         File(imagePath),
