@@ -67,9 +67,18 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 },
                 items: L10n.all.map((locale) {
                   final countryName = L10n.getCountryName(locale.languageCode);
+                  final countryFlag = L10n.getCountryFlag(locale.languageCode);
                   return DropdownMenuItem(
                     value: locale,
-                    child: Text(countryName),
+                    child: Row(
+                      children: [
+                        countryFlag,
+                        Container(
+                          margin: const EdgeInsets.only(left: 4),
+                          child: Text(countryName),
+                        ),
+                      ],
+                    ),
                   );
                 }).toList(),
               ),

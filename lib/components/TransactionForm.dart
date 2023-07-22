@@ -145,9 +145,9 @@ class _TransactionFormState extends State<TransactionForm> {
                                   Uuid id = const Uuid();
                                   transactionProvider.addTransaction(
                                     id.v1(),
-                                    _transactionController.text,
-                                    _reasonController.text,
-                                    double.parse(_amountController.text),
+                                    _transactionController.text.trim(),
+                                    _reasonController.text.trim(),
+                                    double.parse(_amountController.text.trim()),
                                     _invoiceImagePath,
                                     widget.selectedDay!.toIso8601String(),
                                   );

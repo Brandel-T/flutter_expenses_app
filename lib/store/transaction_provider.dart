@@ -24,6 +24,7 @@ class TransactionProvider extends ChangeNotifier {
   List<MTransactionGroupedAmountData> maxAmountPerWeek = [];
   List<Transaction> lastMostExpensiveTransactions = [];
   Transaction? lastTransaction;
+  Transaction? transaction;
   double totalMonthAmount = 0;
 
   bool get isDark => _isDark;
@@ -283,5 +284,17 @@ class TransactionProvider extends ChangeNotifier {
       maxAmountPerMonth.add(value);
     }
     maxAmountPerMonth.sort((a, b) => a.compareTo(b)); // ! IMPORTANT
+  }
+  Future<Transaction?> getTransactionById(String id) async {
+    Map<String, dynamic> response = await TransactionService.findById(id);
+    transaction = Transaction(
+      id: response['id'],
+      name: response['name'],
+      reason: response['reason'],
+      amount: response['amount'],
+      imagePath: response['imagePath'],
+      date: response['date'],
+    );
+    return transaction;
   }
 }

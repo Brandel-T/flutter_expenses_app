@@ -24,6 +24,18 @@ class TransactionService {
     });
   }
 
+  static Future<Map<String, dynamic>> findById(String id) async {
+    Map<String, dynamic> transaction = {};
+    try {
+      final db = await openDB();
+      transaction = (await db.query(TABLE_NAME, where: 'id = ?', whereArgs: [id])).first;
+    } catch (e) {
+      debugPrint('$e');
+    }
+
+    return transaction;
+  }
+
   /// insert a new transaction into the db
   static Future<void> insertTransaction(tr.Transaction transaction) async {
     try {

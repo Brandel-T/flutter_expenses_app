@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData lightTheme = FlexThemeData.light(
+    useMaterial3: true,
     scheme: FlexScheme.indigo,
     surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
     blendLevel: 9,
@@ -37,6 +38,7 @@ class AppTheme {
   );
 
   static ThemeData darkTheme = FlexThemeData.dark(
+    useMaterial3: true,
     scheme: FlexScheme.indigo,
     surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
     blendLevel: 15,

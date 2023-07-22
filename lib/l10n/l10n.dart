@@ -13,4 +13,11 @@ class L10n {
     if (countryCode == 'fr') return 'Fran\u00e7ais';
     return 'English';
   }
+
+  static Image getCountryFlag(String? countryCode) {
+    String flag = "flag_UK";
+    if (countryCode == 'de') flag = "flag_DE";
+    if (countryCode == 'fr') flag = "flag_FR";
+    return Image.asset('assets/images/$flag.png', width: 24, height: 24, fit: BoxFit.fitWidth);
+  }
 }
