@@ -155,14 +155,14 @@ class _TransactionDetailState extends State<TransactionDetail> {
                           AppLocalizations.of(context)!.transaction,
                           name,
                         ),
-                        const Divider(height: 6),
+                        const Divider(height: 6, color: Colors.transparent),
                         TransactionEntry(
                           context,
                           _reasonController,
                           AppLocalizations.of(context)!.reason,
                           reason,
                         ),
-                        const Divider(height: 6),
+                        const Divider(height: 6, color: Colors.transparent),
                         TransactionEntry(
                           context,
                           _amountController,

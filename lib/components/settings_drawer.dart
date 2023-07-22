@@ -49,9 +49,9 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             ],
           ),
         ),
-        Divider(color: Theme.of(context).colorScheme.onSurfaceVariant,),
+        Divider(color: Theme.of(context).dividerColor,),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -85,7 +85,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             ],
           ),
         ),
-        Divider(color: Theme.of(context).colorScheme.onSurfaceVariant,),
+        Divider(color: Theme.of(context).dividerColor,),
       ],
     );
   }

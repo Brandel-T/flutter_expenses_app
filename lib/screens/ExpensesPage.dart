@@ -38,13 +38,6 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       length: _getTabs(context).length,
       child: Builder(
         builder: (context) {
-          TabController? tabController = DefaultTabController.of(context);
-
-          tabController.addListener(() {
-            if (!tabController.indexIsChanging) {
-              print("Current tab index ${tabController.index}");
-            }
-          });
 
           return Scaffold(
             appBar: AppBar(

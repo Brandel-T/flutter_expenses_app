@@ -17,23 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  
   DateTime? _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  void _setSelectedDay(DateTime daySelected) {
-    setState(() {
-      _selectedDay = daySelected;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,21 +42,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                 ),
                 title: Text(AppLocalizations.of(context)!.transaction, style: TextStyle(color: Theme.of(context).indicatorColor),),
-                // leading: Icon(Icons.menu, color: Theme.of(context).indicatorColor,),
                 actions: [
-                  Switch(
-                    value: appProvider.isDark,
-                    onChanged: (value) {
-                      appProvider.setColorMode(value);
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      appProvider.setColorMode(!appProvider.isDark);
-                    },
-                    child: appProvider.isDark
-                        ? const Icon(Icons.dark_mode_outlined)
-                        : Icon(Icons.light_mode_outlined, color: Theme.of(context).indicatorColor),
+                  Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    child: GestureDetector(
+                      onTap: () {
+                        appProvider.setColorMode(!appProvider.isDark);
+                      },
+                      child: appProvider.isDark
+                          ? const Icon(Icons.dark_mode_outlined)
+                          : Icon(Icons.light_mode_outlined, color: Theme.of(context).indicatorColor),
+                    ),
                   ),
                 ],
               ),
