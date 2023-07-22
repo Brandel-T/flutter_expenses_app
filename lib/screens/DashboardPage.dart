@@ -175,7 +175,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             },
                             child: ListTile(
                               title: Text(e.name, style: const TextStyle(fontWeight: FontWeight.w400),), 
-                              subtitle: Text(DateFormat.MMMM(appProvider.locale.countryCode).format(DateTime.parse(e.date))),
+                              subtitle: Text(DateFormat.MMMMd(appProvider.locale.countryCode).format(DateTime.parse(e.date))),
                               trailing: Text(
                                 NumberFormat.currency(locale: 'de_DE', symbol: '€').format(e.amount),
                                 style: TextStyle(color: Colors.green[600], fontWeight: FontWeight.w500),),
