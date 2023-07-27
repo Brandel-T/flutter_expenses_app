@@ -192,7 +192,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                 child: ListTile(
                                   title: Text(e.name, style: const TextStyle(fontWeight: FontWeight.w400),), 
                                   subtitle: Row(children: [
-                                    Text(DateFormat.MMMMd(appProvider.locale.countryCode).format(DateTime.parse(e.date))),
+                                    Text(
+                                      DateFormat.MMMMd(appProvider.locale.countryCode).format(DateTime.parse(e.date)),
+                                      style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
+                                    ),
                                     Container(
                                         margin: const EdgeInsets.only(left: 10),
                                         child: Text(

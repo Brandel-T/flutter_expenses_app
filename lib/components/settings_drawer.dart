@@ -25,9 +25,24 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         DrawerHeader(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primaryContainer,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.indigo,
+                Colors.indigo[600]!,
+                const Color(0xff6a3de8),
+                const Color(0xff6a3de8).withOpacity(0.9),
+                const Color(0xff6a3de8).withOpacity(0.7),
+                const Color(0xff6a3de8).withOpacity(0.5),
+                const Color(0x0ff536fe).withOpacity(0.3),
+              ]
+            ),
           ),
           child: Center(
-            child: Text("Expenses App", style: Theme.of(context).textTheme.displaySmall!,),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(70),
+                child: Image.asset('assets/logo/expenses.png')),
           ),
         ),
         Padding(padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
