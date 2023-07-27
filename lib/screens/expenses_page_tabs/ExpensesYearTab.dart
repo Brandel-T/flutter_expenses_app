@@ -78,7 +78,7 @@ class _ExpensesYearTabState extends State<ExpensesYearTab> {
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20),
+                            ),
                           ),
                         ],
                       ),
@@ -142,7 +142,7 @@ class _ExpensesYearTabState extends State<ExpensesYearTab> {
             subtitle: Text(transaction.reason, style: TextStyle(color: Theme.of(context).hintColor)),
             trailing: Text(
               NumberFormat.currency(locale: 'de_DE', symbol: '€').format(transaction.amount),
-              style: TextStyle(color: Colors.green[400], fontWeight: FontWeight.w400),
+              style: TextStyle(color: Colors.green[400], fontWeight: FontWeight.w600, fontSize: 14),
             ),
             tileColor: Theme.of(context).colorScheme.background,
           ),

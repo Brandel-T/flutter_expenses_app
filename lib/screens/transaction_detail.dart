@@ -204,7 +204,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-              OutlinedButton.icon(
+              FilledButton.tonal(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     appProvider.addTransaction(
@@ -222,8 +222,15 @@ class _TransactionDetailState extends State<TransactionDetail> {
                     Provider.of<TransactionProvider>(context, listen: false).getAllYearTransactions();
                   }
                 },
-                icon: Icon(Icons.save_outlined, color: Theme.of(context).colorScheme.primary),
-                label: Text(AppLocalizations.of(context)!.save),
+                
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith((states) => Theme.of(context).colorScheme.inversePrimary), ),
+                // icon: Icon(Icons.save_outlined, color: Theme.of(context).colorScheme.primary),
+                child: Row(
+                  children: [
+                   Container(margin: const EdgeInsets.only(right: 4), child: const Icon(Icons.save_rounded),),
+                    Text(AppLocalizations.of(context)!.save,)
+                  ],
+                ),
               ),
               TextButton.icon(
                 onPressed: () {

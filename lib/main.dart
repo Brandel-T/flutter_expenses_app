@@ -1,4 +1,3 @@
-import 'package:expenses_app_2/screens/HomeScreen.dart';
 import 'package:expenses_app_2/screens/transaction_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

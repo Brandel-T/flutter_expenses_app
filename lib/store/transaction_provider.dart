@@ -87,6 +87,7 @@ class TransactionProvider extends ChangeNotifier {
 
   Future<void> getAllTransactions() async {
     requestData = await TransactionService.getAllTransactions();
+    transactions.clear();
     for (final tr in requestData) {
       transactions.add(Transaction(
           id: tr['id'],
