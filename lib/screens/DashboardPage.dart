@@ -106,6 +106,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     floating: true,
                     stretch: true,
                     backgroundColor: Theme.of(context).colorScheme.background,
+                    elevation: 2,
                     title: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[

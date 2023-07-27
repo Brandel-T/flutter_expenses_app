@@ -3,6 +3,7 @@ import 'package:expenses_app_2/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:expenses_app_2/store/transaction_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -103,15 +104,27 @@ class _TransactionDetailState extends State<TransactionDetail> {
                                 ],
                               );
                             }
-                            return Image.file(
-                              fit: BoxFit.cover,
-                              File(appProvider.transaction!.imagePath),
+                            // return Image.file(
+                            //   fit: BoxFit.cover,
+                            //   File(appProvider.transaction!.imagePath),
+                            // );
+                            return SizedBox(
+                              width: double.infinity,
+                              child: imagePath == ""
+                                ? const Text('No taken picture')
+                                : PhotoView.customChild(child: Image.file(fit: BoxFit.cover, File(imagePath)))
                             );
                           },
                         )
-                      : Image.file(
-                          fit: BoxFit.cover,
-                          File(imagePath),
+                      // : Image.file(
+                      //     fit: BoxFit.cover,
+                      //     File(imagePath),
+                      // ),
+                      : SizedBox(
+                        width: double.infinity,
+                        child: imagePath == ""
+                          ? const Text('No taken picture')
+                          : PhotoView.customChild(child: Image.file(fit: BoxFit.cover, File(imagePath)))
                       ),
                   ),
                   Positioned(
