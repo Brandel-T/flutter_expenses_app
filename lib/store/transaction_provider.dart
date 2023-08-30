@@ -285,7 +285,9 @@ class TransactionProvider extends ChangeNotifier {
       maxAmountPerMonth.add(value);
     }
     maxAmountPerMonth.sort((a, b) => a.compareTo(b)); // ! IMPORTANT
+    notifyListeners();
   }
+
   Future<Transaction?> getTransactionById(String id) async {
     Map<String, dynamic> response = await TransactionService.findById(id);
     transaction = Transaction(

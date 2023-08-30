@@ -15,7 +15,7 @@ class _ExpensesYearTabState extends State<ExpensesYearTab> {
   @override
   Widget build(BuildContext context) {
     return ExpensesList(
-      loadData: Provider.of<TransactionProvider>(context, listen: false)
+      future: Provider.of<TransactionProvider>(context, listen: false)
           .getAllYearTransactions(),
       periodType: PeriodType.year,
     );

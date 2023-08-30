@@ -15,7 +15,7 @@ class _ExpensesMonthTabState extends State<ExpensesMonthTab> {
   @override
   Widget build(BuildContext context) {
     return ExpensesList(
-      loadData: Provider.of<TransactionProvider>(context, listen: false)
+      future: Provider.of<TransactionProvider>(context, listen: false)
           .getAllMonthTransactions(),
       periodType: PeriodType.month,
     );

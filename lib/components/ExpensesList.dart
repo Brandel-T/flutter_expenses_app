@@ -10,19 +10,19 @@ import '../screens/HomePage.dart';
 import 'TransactionItem.dart';
 
 class ExpensesList extends StatelessWidget {
-  final Future<void> loadData;
+  final Future<void> future;
   final PeriodType periodType;
 
   const ExpensesList({
     super.key,
-    required this.loadData,
+    required this.future,
     required this.periodType,
   });
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: loadData,
+      future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

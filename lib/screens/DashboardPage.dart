@@ -26,15 +26,17 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     Future.delayed(Duration.zero, () async {
       Provider.of<TransactionProvider>(context, listen: false)
-          .getLastMostExpensiveTransactions();
-      Provider.of<TransactionProvider>(context, listen: false)
-          .getTotalMonthAmount();
+        ..getLastMostExpensiveTransactions()
+        ..getTotalMonthAmount()
+        ..getAllMonthTransactions()
+        ..getMaxAmountPerMonth();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<TransactionProvider>(context);
+    final appProvider =
+        Provider.of<TransactionProvider>(context, listen: false);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -61,7 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             )
           : FutureBuilder(
-              future: Provider.of<TransactionProvider>(context)
+              future: Provider.of<TransactionProvider>(context, listen: false)
                   .getMaxAmountPerMonth(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -85,16 +87,18 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   );
                 }
-                List<MTransactionPerMonth> monthTransaction =
-                    appProvider.transactions_per_month;
                 double lastTransactionAmount =
                     appProvider.maxAmountPerMonth.last.periodAmount;
-                double secondLastTransactionAmount = 0;
+                int numberOfMonths = appProvider.transactions_per_month.length;
+                double secondLastTransactionAmount = numberOfMonths >= 2
+                    ? appProvider
+                        .transactions_per_month[numberOfMonths - 2].totalAmount
+                    : 0;
                 double amountDifference = lastTransactionAmount;
                 bool badMonth = false;
                 bool onlyOneMonth = false;
                 int percentage = 100; // default 100%
-                if (appProvider.transactions.length > 1) {
+                if (numberOfMonths >= 2) {
                   secondLastTransactionAmount = appProvider
                       .maxAmountPerMonth[
                           appProvider.maxAmountPerMonth.length - 2]
@@ -116,68 +120,108 @@ class _DashboardPageState extends State<DashboardPage> {
 
                 return CustomScrollView(
                   slivers: <Widget>[
-                    SliverAppBar(
-                      expandedHeight: 130,
-                      snap: true,
-                      floating: true,
-                      stretch: true,
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                      elevation: 2,
-                      title: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            AppLocalizations.of(context)!.total_month_spending,
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.onSurface),
-                          ),
-                          Container(
-                              height: 24,
-                              width: 24,
-                              margin: const EdgeInsets.only(left: 8),
-                              decoration: BoxDecoration(
+                    if (numberOfMonths == 1)...[
+                      SliverToBoxAdapter(child: Container(height: 60, margin: const EdgeInsets.symmetric(horizontal: 10),)),
+                      SliverToBoxAdapter(
+                        child: Row(
+                          children: [
+                            Text(
+                              "  ${AppLocalizations.of(context)!.moneySpent} ",
+                              style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
+                            ),
+                            Text(NumberFormat.currency(locale: 'de_DE', symbol: '€').format(appProvider.totalMonthAmount),
+                              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24, color: Theme.of(context).colorScheme.primary),),
+                          ],
+                        ),
+                      )
+                    ] else
+                      SliverAppBar(
+                        expandedHeight: 130,
+                        snap: true,
+                        floating: true,
+                        stretch: true,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        elevation: 2,
+                        title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .total_month_spending,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                            ),
+                            Container(
+                                height: 24,
+                                width: 24,
+                                margin: const EdgeInsets.only(left: 8),
+                                decoration: BoxDecoration(
+                                    color: badMonth || onlyOneMonth
+                                        ? Colors.red[600]!.withOpacity(0.2)
+                                        : Colors.green[600]!.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(50)),
+                                child: Center(
+                                  child: badMonth || onlyOneMonth
+                                      ? Icon(
+                                          Icons.arrow_drop_up_outlined,
+                                          color: Colors.red[700],
+                                        )
+                                      : Icon(Icons.arrow_drop_down_outlined,
+                                          color: Colors.green[700]),
+                                )),
+                            Text(
+                              " $percentage %",
+                              style: TextStyle(
                                   color: badMonth || onlyOneMonth
-                                      ? Colors.red[600]!.withOpacity(0.2)
-                                      : Colors.green[600]!.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: Center(
-                                child: badMonth || onlyOneMonth
-                                    ? Icon(
-                                        Icons.arrow_drop_up_outlined,
-                                        color: Colors.red[700],
-                                      )
-                                    : Icon(Icons.arrow_drop_down_outlined,
-                                        color: Colors.green[700]),
-                              )),
-                          Text(
-                            " $percentage %",
-                            style: TextStyle(
-                                color: badMonth || onlyOneMonth
-                                    ? Colors.red[700]
-                                    : Colors.green[600]!.withOpacity(0.9),
-                                fontSize: 15),
-                          )
-                        ],
-                      ),
-                      automaticallyImplyLeading: false,
-                      flexibleSpace: FlexibleSpaceBar(
-                        title: Transform(
-                          transform: Matrix4.translationValues(-55, 0, 0),
-                          child: ListTile(
-                            title: Text(
-                              NumberFormat.currency(
-                                      locale: 'de_DE', symbol: '€')
-                                  .format(appProvider.totalMonthAmount),
-                              style: Theme.of(context).textTheme.titleLarge,
-                              textAlign: TextAlign.left,
+                                      ? Colors.red[700]
+                                      : Colors.green[600]!.withOpacity(0.9),
+                                  fontSize: 15),
+                            )
+                          ],
+                        ),
+                        automaticallyImplyLeading: false,
+                        flexibleSpace: FlexibleSpaceBar(
+                          title: Transform(
+                            transform: Matrix4.translationValues(-55, 0, 0),
+                            child: ListTile(
+                              title: SizedBox(
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(left: 6),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: badMonth
+                                            ? Colors.red[600]?.withOpacity(0.2)
+                                            : Colors.green[600]
+                                                ?.withOpacity(0.2),
+                                      ),
+                                      child: Text(
+                                        "${(badMonth ? "+" : "-")} ${NumberFormat.currency(locale: 'de_DE', symbol: '€').format(amountDifference)}",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: badMonth
+                                                ? Colors.red[700]
+                                                : Colors.green[600]
+                                                    ?.withOpacity(0.9)),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
+                          background: Container(
+                              color: Theme.of(context).scaffoldBackgroundColor),
                         ),
-                        background: Container(
-                            color: Theme.of(context).scaffoldBackgroundColor),
                       ),
-                    ),
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.all(10),
