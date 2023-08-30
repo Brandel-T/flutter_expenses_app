@@ -64,6 +64,8 @@ flutter:
     - assets/images/icon_money_spent.gif
     - assets/images/icon_money_saved.gif
     - assets/logo/expenses.png
+    - assets/icons/icon-date-dark.png
+    - assets/icons/icon-date-light.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

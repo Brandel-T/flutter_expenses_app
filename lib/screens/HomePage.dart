@@ -16,7 +16,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   DateTime? _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -29,36 +30,38 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           drawer: const Drawer(child: SettingsDrawer()),
           drawerEnableOpenDragGesture: true,
           backgroundColor: Theme.of(context).colorScheme.background,
-          body: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: 250,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    color: Theme.of(context).colorScheme.background,
-                    child: Image.asset('assets/images/buy-online.gif'),
+          body: CustomScrollView(slivers: <Widget>[
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: 220,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  color: Theme.of(context).colorScheme.background,
+                  child: Image.asset('assets/images/buy-online.gif'),
+                ),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.transaction,
+                style: TextStyle(color: Theme.of(context).indicatorColor),
+              ),
+              actions: [
+                Container(
+                  margin: const EdgeInsets.only(right: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      appProvider.setColorMode(!appProvider.isDark);
+                    },
+                    child: appProvider.isDark
+                        ? const Icon(Icons.dark_mode_outlined)
+                        : Icon(Icons.light_mode_outlined,
+                            color: Theme.of(context).indicatorColor),
                   ),
                 ),
-                title: Text(AppLocalizations.of(context)!.transaction, style: TextStyle(color: Theme.of(context).indicatorColor),),
-                actions: [
-                  Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    child: GestureDetector(
-                      onTap: () {
-                        appProvider.setColorMode(!appProvider.isDark);
-                      },
-                      child: appProvider.isDark
-                          ? const Icon(Icons.dark_mode_outlined)
-                          : Icon(Icons.light_mode_outlined, color: Theme.of(context).indicatorColor),
-                    ),
-                  ),
-                ],
-              ),
-              SliverToBoxAdapter(child: _getCalendar()),
-            ]
-          ),
+              ],
+            ),
+            SliverToBoxAdapter(child: _getCalendar()),
+          ]),
           floatingActionButton: FloatingActionButton(
             elevation: 4,
             onPressed: () => _addNewTransactionModal(context, _closeModal),
@@ -71,7 +74,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
     );
   }
-  
+
   void _closeModal() {
     Navigator.of(context).pop();
   }
@@ -97,45 +100,58 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     DateTime now = DateTime.now();
 
     return Consumer<TransactionProvider>(
-        builder: (context, cameraStore, child) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.9,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ),
-            child: TableCalendar(
-              locale: Localizations.localeOf(context).languageCode,
-              focusedDay: _focusedDay,
-              firstDay: DateTime(now.year-1),
-              lastDay: DateTime(now.year + 1),
-              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-              onDaySelected: (selectedDay, focusedDay) {
+      builder: (context, cameraStore, child) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          child: TableCalendar(
+            locale: Localizations.localeOf(context).languageCode,
+            focusedDay: _focusedDay,
+            firstDay: DateTime(now.year - 1),
+            lastDay: DateTime(now.year + 1),
+            selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _focusedDay = focusedDay;
+                _selectedDay = selectedDay;
+              });
+            },
+            calendarFormat: _calendarFormat,
+            onFormatChanged: (format) {
+              setState(() {
+                _calendarFormat = format;
+              });
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            shouldFillViewport: true,
+            onDayLongPressed: (selectedDay, focusedDay) {
                 setState(() {
-                  _focusedDay = focusedDay;
                   _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
                 });
-              },
-              calendarFormat: _calendarFormat,
-              onFormatChanged: (format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              },
-              onPageChanged: (focusedDay) {_focusedDay = focusedDay;},
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              shouldFillViewport: true,
-              onDayLongPressed: (selectedDay, focusedDay) => _addNewTransactionModal(context, _closeModal),
-              headerStyle: HeaderStyle(
+                _addNewTransactionModal(context, _closeModal);
+            },
+            headerStyle: HeaderStyle(
                 titleTextStyle: Theme.of(context).textTheme.headlineMedium!,
-                formatButtonDecoration: BoxDecoration(border: Border.all(color: Colors.transparent),),
-                formatButtonTextStyle: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w500, fontSize: 16)
-              ),
-              daysOfWeekStyle: DaysOfWeekStyle(weekdayStyle: Theme.of(context).textTheme.titleSmall!),
-            ),
-          );
-        },
-      );
+                formatButtonDecoration: BoxDecoration(
+                  border: Border.all(color: Colors.transparent),
+                ),
+                formatButtonTextStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16)),
+            daysOfWeekStyle: DaysOfWeekStyle(
+                weekdayStyle: Theme.of(context).textTheme.titleSmall!),
+          ),
+        );
+      },
+    );
   }
 }
