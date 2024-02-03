@@ -1,16 +1,26 @@
-# expenses_app_2
+# MoneyBack
+## Expenses traker mobile appliccation
 
-A new Flutter project.
+`Flutter` & `Dart` 🫀
+
+`MoneyBack` is an expenses tracker mobile application built with Flutter and Dart.
+With no experience in Flutter/Dart, I took this challenge to get started in this popular framework. And I can now say that it was a great and fun experience for me, since a learn a lot.
+
+This app supports these features:
+- [x] Camera
+- [x] Dark Mode
+- [x] Local storage
+- [x] Internationalization: 🇺🇸 🇫🇷 🇩🇪
+- [x] Expenditure Report
+- [x] Graphical report inside dashboard
+- [ ] Sorting expenditures by category
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To get started see the [doc](https://docs.flutter.dev/get-started/install)
+For open source libraries:
+- [pub.dev](https://pub.dev/) 🤝
+- [Flutter Synchfusion](https://www.syncfusion.com/flutter-widgets) ⭐🌟
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+Flutter samples:
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
