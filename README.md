@@ -1,10 +1,9 @@
 # MoneyBack
 ## Expenses traker mobile appliccation
 
-`Flutter` & `Dart` 🫀
+`Flutter` 🫀 `Dart`
 
-`MoneyBack` is an expenses tracker mobile application built with Flutter and Dart.
-With no experience in Flutter/Dart, I took this challenge to get started in this popular framework. And I can now say that it was a great and fun experience for me, since a learn a lot.
+`MoneyBack` is a mobile expense tracking application built using Flutter and Dart. Having no experience of Flutter/Dart, I took on this challenge to introduce myself to this popular framework. And I can now say that it was a great and fun experience for me, because I learned a lot.
 
 This app supports these features:
 - [x] Camera
